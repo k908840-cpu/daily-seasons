@@ -63,6 +63,10 @@ export default function ToolsScreen() {
         <Text style={[styles.featureTitle, { color: colors.text, marginTop: 0 }]} >Nine-day prayer journeys</Text>
         <Text style={[styles.featureCaption, { color: colors.muted }]} >Gratitude and peace</Text>
       </Pressable>
+      <Pressable onPress={() => router.push("/night-prayer")} style={[styles.panel, { backgroundColor: colors.card, borderColor: colors.border, marginTop: 10 }]}>
+        <Text style={[styles.featureTitle, { color: colors.text, marginTop: 0 }]}>Night prayer & narration</Text>
+        <Text style={[styles.featureCaption, { color: colors.muted }]}>Bedtime reflections with voice and sleep stop</Text>
+      </Pressable>
       <Text style={[styles.section, { color: colors.text }]}>Your prayer intentions</Text>
       <Text style={[styles.description, { color: colors.muted }]}>Private and saved on this device.</Text>
       <View style={[styles.panel, { backgroundColor: colors.card, borderColor: colors.border }]}>

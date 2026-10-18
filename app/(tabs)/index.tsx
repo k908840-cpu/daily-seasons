@@ -137,6 +137,22 @@ export default function HomeScreen() {
         <Text style={{ color: colors.muted, fontSize: 13, marginTop: 6 }}>Browse books and chapters</Text>
       </Pressable>
 
+      <Pressable onPress={() => router.push("/daily-path")} style={{ backgroundColor: colors.accent, borderRadius: 19, padding: 20, marginBottom: 12 }}>
+        <Text style={{ color: "#fff", fontSize: 12, fontWeight: "700", letterSpacing: 1 }}>TODAY'S PRAYER</Text>
+        <Text style={{ color: "#fff", fontSize: 21, fontWeight: "600", marginTop: 8 }}>Start My Daily Path →</Text>
+        <Text style={{ color: "#F2F0F7", marginTop: 5 }}>A gentle moment of Scripture and reflection</Text>
+      </Pressable>
+      <View style={{ flexDirection: "row", gap: 11, marginBottom: 27 }}>
+        <Pressable onPress={() => router.push("/calendar")} style={{ flex: 1, backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1, borderRadius: 16, padding: 16 }}>
+          <Text style={{ color: colors.text, fontSize: 16, fontWeight: "600" }}>Christian calendar →</Text>
+          <Text style={{ color: colors.muted, fontSize: 12, marginTop: 7 }}>Seasons and observances</Text>
+        </Pressable>
+        <Pressable onPress={() => router.push("/seasonal-journeys")} style={{ flex: 1, backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1, borderRadius: 16, padding: 16 }}>
+          <Text style={{ color: colors.text, fontSize: 16, fontWeight: "600" }}>Seasonal journeys →</Text>
+          <Text style={{ color: colors.muted, fontSize: 12, marginTop: 7 }}>Daily reflection plans</Text>
+        </Pressable>
+      </View>
+      {(season?.id === "advent" || season?.id === "christmas") && <>
       <View style={styles.sectionHeader}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
           The journey to Christmas
@@ -274,6 +290,7 @@ export default function HomeScreen() {
         and there are no streaks to lose.
       </Text>
 
+      </>}
       <Pressable
         onPress={() => router.push("/sources")}
         style={styles.footer}

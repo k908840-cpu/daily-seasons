@@ -45,6 +45,11 @@ export default function ToolsScreen() {
           <Ionicons name="arrow-forward" size={18} color={colors.accent} />
         </Pressable>
       </View>
+      <Pressable onPress={() => router.push("/vault")} style={[styles.panel, { backgroundColor: colors.card, borderColor: colors.border, marginTop: 20, flexDirection: "row", alignItems: "center", gap: 12 }]}>
+        <Ionicons name="journal-outline" size={27} color={colors.accent} />
+        <View style={{ flex: 1 }}><Text style={[styles.featureTitle, { color: colors.text, marginTop: 0 }]}>My Faith Vault</Text><Text style={[styles.featureCaption, { color: colors.muted }]}>Journal, bookmarks & Scripture notes</Text></View>
+        <Ionicons name="chevron-forward" size={20} color={colors.accent} />
+      </Pressable>
       <Text style={[styles.section, { color: colors.text }]}>Your prayer intentions</Text>
       <Text style={[styles.description, { color: colors.muted }]}>Private and saved on this device.</Text>
       <View style={[styles.panel, { backgroundColor: colors.card, borderColor: colors.border }]}>

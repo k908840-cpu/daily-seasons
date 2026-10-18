@@ -18,9 +18,10 @@ import {
 } from "@/lib/churchCalendar";
 import { loadProgress } from "@/lib/storage";
 import { isDayPaywalled } from "@/lib/purchases";
+import { recommendPrayer } from "@/lib/recommendations";
 
 export default function HomeScreen() {
-  const { colors, premium } = useApp();
+  const { colors, premium, settings } = useApp();
   const router = useRouter();
 
   const today = new Date();
@@ -67,6 +68,7 @@ export default function HomeScreen() {
     router.push(`/day/advent/${day}`);
   };
 
+  const recommendation = recommendPrayer(settings, today.getHours());
   const countdown = daysUntilChristmas(today);
   const seasonName = season?.label ?? "Ordinary Time";
 
@@ -137,10 +139,10 @@ export default function HomeScreen() {
         <Text style={{ color: colors.muted, fontSize: 13, marginTop: 6 }}>Browse books and chapters</Text>
       </Pressable>
 
-      <Pressable onPress={() => router.push("/daily-path")} style={{ backgroundColor: colors.accent, borderRadius: 19, padding: 20, marginBottom: 12 }}>
+      <Pressable onPress={() => router.push(recommendation.route)} style={{ backgroundColor: colors.accent, borderRadius: 19, padding: 20, marginBottom: 12 }}>
         <Text style={{ color: "#fff", fontSize: 12, fontWeight: "700", letterSpacing: 1 }}>TODAY'S PRAYER</Text>
-        <Text style={{ color: "#fff", fontSize: 21, fontWeight: "600", marginTop: 8 }}>Start My Daily Path →</Text>
-        <Text style={{ color: "#F2F0F7", marginTop: 5 }}>A gentle moment of Scripture and reflection</Text>
+        <Text style={{ color: "#fff", fontSize: 21, fontWeight: "600", marginTop: 8 }}>{recommendation.title} →</Text>
+        <Text style={{ color: "#F2F0F7", marginTop: 5 }}>{recommendation.subtitle}</Text>
       </Pressable>
       <View style={{ flexDirection: "row", gap: 11, marginBottom: 27 }}>
         <Pressable onPress={() => router.push("/calendar")} style={{ flex: 1, backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1, borderRadius: 16, padding: 16 }}>

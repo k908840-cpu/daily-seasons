@@ -41,7 +41,7 @@ export default function ScriptureScreen() {
     setHighlight(next);
   };
   const parseReference = () => {
-    const match = search.trim().match(/^(.+?)\\s+(\\d+)$/);
+    const match = search.trim().match(/^(.+?)\s+(\d+)$/);
     if (!match) return;
     const selected = BOOKS.find(b => b.toLowerCase() === match[1].toLowerCase());
     if (selected) { setBook(selected); setChapter(Math.max(1, Number(match[2]))); setSearch(""); }

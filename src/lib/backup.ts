@@ -15,13 +15,30 @@ export async function exportBackup(): Promise<string> {
   return JSON.stringify({ app: "daily-seasons", version: 1, exportedAt: new Date().toISOString(), data } satisfies BackupData, null, 2);
 }
 function plainObject(v: unknown): v is Record<string, unknown> { return typeof v === "object" && v !== null && !Array.isArray(v); }
+const isString = (v: unknown): v is string => typeof v === "string";
+const isShortString = (v: unknown) => isString(v) && v.length <= 20000;
+const isList = (v: unknown, predicate: (v: unknown) => boolean) =>
+  Array.isArray(v) && v.length <= 10000 && v.every(predicate);
 function validate(key: Field, value: unknown): boolean {
-  if (["progress","journal","bookmarks","prayer_list","scripture_notes","scripture_highlights","novena_progress"].includes(key)) {
-    if (key === "progress") return plainObject(value) && Array.isArray(value.readDays) && value.readDays.every(x => typeof x === "string");
-    if (key === "novena_progress") return plainObject(value) && Object.values(value).every(x => Array.isArray(x) && x.every(n => Number.isInteger(n) && n >= 1 && n <= 9));
-    return Array.isArray(value) && value.length <= 10000 && value.every(item => plainObject(item));
+  switch (key) {
+    case "settings":
+      return plainObject(value) && typeof value.onboardingComplete === "boolean" &&
+        ["normal","large"].includes(String(value.textSize)) &&
+        ["system","light","dark"].includes(String(value.darkMode)) &&
+        Number.isInteger(value.reminderHour) && Number(value.reminderHour) >= 0 && Number(value.reminderHour) <= 23 &&
+        Number.isInteger(value.reminderMinute) && Number(value.reminderMinute) >= 0 && Number(value.reminderMinute) <= 59;
+    case "progress": return plainObject(value) && isList(value.readDays, isShortString);
+    case "journal": return isList(value, v => plainObject(v) && isShortString(v.dateISO) && isShortString(v.line));
+    case "bookmarks": return isList(value, v => plainObject(v) && isShortString(v.id) && isShortString(v.ref) && isShortString(v.title) && isShortString(v.createdAt) && ["daily","prayer","scripture"].includes(String(v.kind)));
+    case "prayer_list": return isList(value, v => plainObject(v) && isShortString(v.id) && isShortString(v.name) && isShortString(v.intention) && typeof v.prayed === "boolean");
+    case "scripture_notes": return isList(value, v => plainObject(v) && isShortString(v.reference) && isShortString(v.text) && isShortString(v.updatedAt));
+    case "scripture_highlights": return isList(value, v => plainObject(v) && isShortString(v.reference) && ["gold","lavender","rose"].includes(String(v.color)));
+    case "scripture_position": return plainObject(value) && isShortString(value.book) && Number.isInteger(value.chapter) && Number(value.chapter) >= 1 && Number(value.chapter) <= 150;
+    case "rosary_session": return plainObject(value) && ["Joyful","Sorrowful","Glorious","Luminous"].includes(String(value.kind)) && Number.isInteger(value.step) && Number(value.step) >= 0 && Number(value.step) <= 100;
+    case "daily_path": return plainObject(value) && isShortString(value.date) && [2,5,10,15].includes(Number(value.duration)) && isList(value.completedSteps, n => Number.isInteger(n) && Number(n) >= 0 && Number(n) <= 4);
+    case "novena_progress": return plainObject(value) && Object.values(value).every(x => isList(x, n => Number.isInteger(n) && Number(n) >= 1 && Number(n) <= 9));
+    default: return false;
   }
-  return plainObject(value);
 }
 export function parseBackup(text: string): BackupData {
   if (text.length > MAX_BYTES) throw new Error("Backup is too large (maximum 1 MB).");
@@ -39,5 +56,5 @@ export function parseBackup(text: string): BackupData {
 export async function importBackup(text: string): Promise<void> {
   const parsed = parseBackup(text);
   const items = Object.entries(parsed.data).map(([key, value]) => [PREFIX + key, JSON.stringify(value)] as [string,string]);
-  await AsyncStorage.multiSet(items);
+  // Preserve the existing values if storage fails partway through a restore.\n  const previous = await AsyncStorage.multiGet(items.map(([key]) => key));\n  try { await AsyncStorage.multiSet(items); }\n  catch (error) {\n    const restore = previous.filter((pair): pair is [string, string] => pair[1] !== null);\n    const remove = previous.filter(([, value]) => value === null).map(([key]) => key);\n    await AsyncStorage.multiSet(restore);\n    if (remove.length) await AsyncStorage.multiRemove(remove);\n    throw error;\n  }
 }

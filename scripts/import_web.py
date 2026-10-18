@@ -37,6 +37,10 @@ ALIASES = {
     "MAR":"Mark","JOH":"John","PHI":"Philippians","JAM":"James",
     "1JO":"1 John","2JO":"2 John","3JO":"3 John",
     "4ES":"4 Esdras","4MA":"4 Maccabees",
+    "TOB":"Tobit","JDT":"Judith","ESG":"Greek Esther","WIS":"Wisdom of Solomon",
+    "SIR":"Sirach","BAR":"Baruch","1MA":"1 Maccabees","2MA":"2 Maccabees",
+    "1ES":"1 Esdras","PRM":"Prayer of Manasseh","PSX":"Psalm 151",
+    "3MA":"3 Maccabees","DNG":"Greek Daniel",
 }
 # eBible BibleWorks VPL uses a reference followed by text, with a separator.
 PATTERN = re.compile(r"^(.+?)\s+(\d+):(\d+)(?:[-–]\d+)?\s+(.+)$")

@@ -56,5 +56,14 @@ export function parseBackup(text: string): BackupData {
 export async function importBackup(text: string): Promise<void> {
   const parsed = parseBackup(text);
   const items = Object.entries(parsed.data).map(([key, value]) => [PREFIX + key, JSON.stringify(value)] as [string,string]);
-  // Preserve the existing values if storage fails partway through a restore.\n  const previous = await AsyncStorage.multiGet(items.map(([key]) => key));\n  try { await AsyncStorage.multiSet(items); }\n  catch (error) {\n    const restore = previous.filter((pair): pair is [string, string] => pair[1] !== null);\n    const remove = previous.filter(([, value]) => value === null).map(([key]) => key);\n    await AsyncStorage.multiSet(restore);\n    if (remove.length) await AsyncStorage.multiRemove(remove);\n    throw error;\n  }
+  // Preserve the existing values if storage fails partway through a restore.
+  const previous = await AsyncStorage.multiGet(items.map(([key]) => key));
+  try { await AsyncStorage.multiSet(items); }
+  catch (error) {
+    const restore = previous.filter((pair): pair is [string, string] => pair[1] !== null);
+    const remove = previous.filter(([, value]) => value === null).map(([key]) => key);
+    await AsyncStorage.multiSet(restore);
+    if (remove.length) await AsyncStorage.multiRemove(remove);
+    throw error;
+  }
 }

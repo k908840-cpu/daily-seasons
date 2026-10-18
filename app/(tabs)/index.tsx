@@ -154,7 +154,7 @@ export default function HomeScreen() {
           <Text style={{ color: colors.muted, fontSize: 12, marginTop: 7 }}>Daily reflection plans</Text>
         </Pressable>
       </View>
-      {(season?.id === "advent" || season?.id === "christmas") && <>
+      {today.getMonth() === 11 && today.getDate() <= 25 && <>
       <View style={styles.sectionHeader}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
           The journey to Christmas
@@ -293,6 +293,13 @@ export default function HomeScreen() {
       </Text>
 
       </>}
+      {season?.id === "christmas" && !(today.getMonth() === 11 && today.getDate() <= 25) && (
+        <View style={{ backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: 18, padding: 20, marginTop: 12 }}>
+          <Text style={{ color: colors.text, fontSize: 21, fontWeight: "600" }}>Celebrate Christmas</Text>
+          <Text style={{ color: colors.muted, lineHeight: 22, marginTop: 8 }}>Explore reflections on the birth of Christ and the twelve days of Christmas.</Text>
+          <Pressable onPress={() => router.push("/seasonal-journeys")} style={{ paddingVertical: 14 }}><Text style={{ color: colors.accent, fontWeight: "700" }}>Open Christmas journey →</Text></Pressable>
+        </View>
+      )}
       <Pressable
         onPress={() => router.push("/sources")}
         style={styles.footer}

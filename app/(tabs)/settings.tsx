@@ -75,6 +75,11 @@ export default function SettingsScreen() {
           <Text style={[styles.rowText, { color: colors.text }]}>Backup & restore my data</Text>
           <Ionicons name="chevron-forward" size={18} color={colors.muted} />
         </Pressable>
+        <Pressable onPress={() => router.push("/traditions")} style={[styles.row, { borderTopWidth: 1, borderTopColor: colors.border }]}>
+          <Ionicons name="book-outline" size={21} color={colors.accent} />
+          <Text style={[styles.rowText, { color: colors.text }]}>Christian traditions & Bible editions</Text>
+          <Ionicons name="chevron-forward" size={18} color={colors.muted} />
+        </Pressable>
         <Pressable onPress={() => router.push("/sources")} style={[styles.row, { borderTopWidth: 1, borderTopColor: colors.border }]}>
           <Ionicons name="shield-checkmark-outline" size={21} color={colors.accent} />
           <Text style={[styles.rowText, { color: colors.text }]}>Sources & privacy</Text>

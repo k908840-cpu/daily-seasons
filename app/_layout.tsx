@@ -25,6 +25,7 @@ function RootNavigator() {
         <Stack.Screen name="day/[season]/[day]" options={{ headerShown: true, title: "Today" }} />
         <Stack.Screen name="paywall" options={{ presentation: "modal", title: "Unlock" }} />
         <Stack.Screen name="sources" options={{ headerShown: true, title: "Sources" }} />
+        <Stack.Screen name="backup" options={{ headerShown: true, title: "Backup & restore" }} />
         <Stack.Screen name="vault" options={{ headerShown: true, title: "My Faith Vault" }} />
         <Stack.Screen name="scripture" options={{ headerShown: true, title: "Scripture" }} />
         <Stack.Screen name="calendar" options={{ headerShown: true, title: "Christian calendar" }} />

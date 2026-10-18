@@ -10,9 +10,12 @@ describe("content attribution", () => {
       expect(prayer.text).not.toContain("PENDING");
     }
   });
-  test("unverified historical prayer texts remain explicitly pending", () => {
+  test("published library prayers have complete text and verified original attribution", () => {
+    expect(LIBRARY_PRAYERS).toHaveLength(8);
     for (const prayer of LIBRARY_PRAYERS) {
-      expect(prayer.sourceId).toBe("placeholder");
+      expect(prayer.sourceId).toBe("daily-seasons-original");
+      expect(prayer.text.length).toBeGreaterThan(100);
+      expect(prayer.text).not.toContain("PENDING");
     }
   });
   test("all four traditions plus shared Christian are represented", () => {

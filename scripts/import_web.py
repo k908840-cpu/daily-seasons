@@ -33,7 +33,7 @@ ALIASES = {
     "HEB":"Hebrews","JAS":"James","1PE":"1 Peter","2PE":"2 Peter",
     "1JN":"1 John","2JN":"2 John","3JN":"3 John","JUD":"Jude","REV":"Revelation",
     # Alternate identifiers used by eBible VPL editions.
-    "SOS":"Song of Solomon","EZE":"Ezekiel","JOE":"Joel","NAH":"Nahum",
+    "SOS":"Song of Solomon","SOL":"Song of Solomon","EZE":"Ezekiel","JOE":"Joel","NAH":"Nahum",
     "MAR":"Mark","JOH":"John","PHI":"Philippians","JAM":"James",
     "1JO":"1 John","2JO":"2 John","3JO":"3 John",
     "4ES":"4 Esdras","4MA":"4 Maccabees",

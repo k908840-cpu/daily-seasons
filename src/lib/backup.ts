@@ -35,8 +35,8 @@ function validate(key: Field, value: unknown): boolean {
     case "scripture_highlights": return isList(value, v => plainObject(v) && isShortString(v.reference) && ["gold","lavender","rose"].includes(String(v.color)));
     case "scripture_position": return plainObject(value) && isShortString(value.book) && Number.isInteger(Number(value.chapter)) && Number(value.chapter) >= 1 && Number(value.chapter) <= 150;
     case "rosary_session": return plainObject(value) && ["Joyful","Sorrowful","Glorious","Luminous"].includes(String(value.kind)) && Number.isInteger(Number(value.step)) && Number(value.step) >= 0 && Number(value.step) <= 100;
-    case "daily_path": return plainObject(value) && isShortString(value.date) && [2,5,10,15].includes(Number(value.duration)) && isList(value.completedSteps, n => Number.isInteger(n) && Number(n) >= 0 && Number(n) <= 4);
-    case "novena_progress": return plainObject(value) && Object.values(value).every(x => isList(x, n => Number.isInteger(n) && Number(n) >= 1 && Number(n) <= 9));
+    case "daily_path": return plainObject(value) && isShortString(value.date) && [2,5,10,15].includes(Number(value.duration)) && isList(value.completedSteps, n => Number.isInteger(Number(n)) && Number(n) >= 0 && Number(n) <= 4);
+    case "novena_progress": return plainObject(value) && Object.values(value).every(x => isList(x, n => Number.isInteger(Number(n)) && Number(n) >= 1 && Number(n) <= 9));
     default: return false;
   }
 }

@@ -65,7 +65,8 @@ def main():
     count = sum(len(v) for b in books.values() for v in b.values())
     missing = sorted(set(ALIASES.values()) - set(books))
     if missing or unknown or count < 30000:
-        raise RuntimeError(f"Import incomplete: {count} verses, missing {missing[:15]}, unknown identifiers {sorted(unknown)[:15]}. Inspect archive format; do not ship partial text.")
+        unmapped = sorted(set(books) - set(ALIASES.values()))
+        raise RuntimeError(f"Import incomplete: {count} verses, missing {missing[:15]}, unknown identifiers {sorted(unknown)[:15]}, unmapped book codes/names {unmapped}. Inspect archive format; do not ship partial text.")
     DEST.write_text(json.dumps(books, ensure_ascii=False, separators=(",",":")), encoding="utf-8")
     print(f"Wrote {count} verses in {len(books)} books to {DEST}")
     print("Source:", URL)

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Linking, Pressable, Text, TextInput, View } from "react-native";
 import { Screen } from "@/components/Screen";
 import { useApp } from "@/context/AppContext";
@@ -18,19 +18,31 @@ export default function ScriptureScreen() {
   const [saved, setSaved] = useState(false);
   const [highlight, setHighlight] = useState<ScriptureHighlight["color"] | null>(null);
   const reference = `${book} ${chapter}`;
+  const [restoredPosition, setRestoredPosition] = useState(false);
+  const noteRef = useRef({ reference, note: "" });
   useEffect(() => {
-    void loadScripturePosition().then(p => { if (p && BOOKS.some(b => b === p.book)) { setBook(p.book); setChapter(p.chapter); } });
+    void loadScripturePosition().then(p => { if (p && BOOKS.some(b => b === p.book) && Number.isInteger(p.chapter) && p.chapter >= 1) { setBook(p.book); setChapter(p.chapter); } }).finally(() => setRestoredPosition(true));
   }, []);
   useEffect(() => {
+    if (!restoredPosition) return;
+    let active = true;
     void saveScripturePosition(book, chapter);
     void Promise.all([loadScriptureNotes(), loadBookmarks(), loadScriptureHighlights()]).then(([notes, bookmarks, highlights]) => {
-      setNote(notes.find(n => n.reference === reference)?.text ?? "");
+      if (!active) return;
+      const nextNote = notes.find(n => n.reference === reference)?.text ?? "";
+      setNote(nextNote);
+      noteRef.current = { reference, note: nextNote };
       setSaved(bookmarks.some(b => b.id === `scripture:${reference}`));
       setHighlight(highlights.find(h => h.reference === reference)?.color ?? null);
     });
-  }, [reference]);
+    return () => { active = false; };
+  }, [reference, restoredPosition]);
   const matches = useMemo(() => BOOKS.filter(b => b.toLowerCase().includes(search.trim().toLowerCase())), [search]);
-  const choose = (b: string) => { setBook(b); setChapter(1); setSearch(""); };
+  const changeReference = (b: string, n: number) => {
+    if (noteRef.current.note.trim()) void saveScriptureNote(noteRef.current.reference, noteRef.current.note);
+    setBook(b); setChapter(n); setSearch("");
+  };
+  const choose = (b: string) => changeReference(b, 1);
   const bookmark = async () => {
     await toggleBookmark({ id: `scripture:${reference}`, kind: "scripture", ref: reference, title: reference, createdAt: new Date().toISOString() });
     setSaved(s => !s);
@@ -44,7 +56,7 @@ export default function ScriptureScreen() {
     const match = search.trim().match(/^(.+?)\s+(\d+)$/);
     if (!match) return;
     const selected = BOOKS.find(b => b.toLowerCase() === match[1].toLowerCase());
-    if (selected) { setBook(selected); setChapter(Math.max(1, Number(match[2]))); setSearch(""); }
+    if (selected && Number.isSafeInteger(Number(match[2])) && Number(match[2]) > 0 && Number(match[2]) <= 150) changeReference(selected, Number(match[2]));
   };
   const action = (label: string, onPress: () => void, active = false) => (
     <Pressable accessibilityRole="button" onPress={onPress} style={{ paddingHorizontal: 13, paddingVertical: 11, borderWidth: 1, borderColor: colors.border, backgroundColor: active ? colors.border : colors.card, borderRadius: 13 }}>
@@ -58,8 +70,8 @@ export default function ScriptureScreen() {
     <View style={{ backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1, padding: 20, borderRadius: 20, marginVertical: 15 }}>
       <Text style={{ color: colors.text, fontSize: 25, fontWeight: "600" }}>{reference}</Text>
       <View style={{ flexDirection: "row", gap: 12, marginVertical: 20, alignItems: "center" }}>
-        {action("− Previous", () => setChapter(n => Math.max(1, n - 1)))}
-        {action("Next +", () => setChapter(n => n + 1))}
+        {action("− Previous", () => changeReference(book, Math.max(1, chapter - 1)))}
+        {action("Next +", () => changeReference(book, chapter + 1))}
       </View>
       <Pressable onPress={() => void Linking.openURL(passageUrl(book, chapter))} style={{ backgroundColor: colors.accent, padding: 16, borderRadius: 14 }}>
         <Text style={{ color: "#fff", textAlign: "center", fontWeight: "700" }}>Read World English Bible online ↗</Text>
@@ -73,7 +85,7 @@ export default function ScriptureScreen() {
       </View>
       <Text style={{ color: colors.muted, fontSize: 12, marginTop: 10 }}>Highlights currently label a chapter reference, not individual verses.</Text>
       <Text style={{ color: colors.text, fontSize: 18, fontWeight: "600", marginTop: 23 }}>My notes</Text>
-      <TextInput value={note} onChangeText={setNote} onBlur={() => void saveScriptureNote(reference, note)} multiline placeholder="Write a private reflection on this chapter…" placeholderTextColor={colors.muted} style={{ color: colors.text, minHeight: 90, textAlignVertical: "top", borderWidth: 1, borderColor: colors.border, borderRadius: 12, padding: 12, marginTop: 10 }} />
+      <TextInput value={note} onChangeText={value => { setNote(value); noteRef.current = { reference, note: value }; }} onBlur={() => void saveScriptureNote(reference, note)} multiline placeholder="Write a private reflection on this chapter…" placeholderTextColor={colors.muted} style={{ color: colors.text, minHeight: 90, textAlignVertical: "top", borderWidth: 1, borderColor: colors.border, borderRadius: 12, padding: 12, marginTop: 10 }} />
       <Pressable onPress={() => void saveScriptureNote(reference, note)} style={{ alignSelf: "flex-end", padding: 12 }}>
         <Text style={{ color: colors.accent, fontWeight: "700" }}>Save note</Text>
       </Pressable>

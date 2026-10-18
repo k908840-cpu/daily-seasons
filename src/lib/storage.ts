@@ -7,6 +7,9 @@ const KEYS = {
   bookmarks: "@daily_seasons/bookmarks",
   prayerList: "@daily_seasons/prayer_list",
   purchase: "@daily_seasons/purchase",
+  scriptureNotes: "@daily_seasons/scripture_notes",
+  scriptureHighlights: "@daily_seasons/scripture_highlights",
+  scripturePosition: "@daily_seasons/scripture_position",
 } as const;
 
 export type TextSize = "normal" | "large";
@@ -33,7 +36,7 @@ export interface JournalEntry {
 
 export interface Bookmark {
   id: string;
-  kind: "daily" | "prayer";
+  kind: "daily" | "prayer" | "scripture";
   ref: string;
   title: string;
   createdAt: string;
@@ -131,4 +134,37 @@ export async function setPremiumUnlocked(value: boolean): Promise<void> {
 
 export function progressKey(season: string, year: number, day: number): string {
   return `${season}-${year}-${day}`;
+}
+
+export interface ScriptureNote {
+  reference: string;
+  text: string;
+  updatedAt: string;
+}
+export interface ScriptureHighlight {
+  reference: string;
+  color: "gold" | "lavender" | "rose";
+}
+export async function loadScriptureNotes(): Promise<ScriptureNote[]> {
+  return JSON.parse((await AsyncStorage.getItem(KEYS.scriptureNotes)) ?? "[]") as ScriptureNote[];
+}
+export async function saveScriptureNote(reference: string, text: string): Promise<void> {
+  const notes = (await loadScriptureNotes()).filter(n => n.reference !== reference);
+  if (text.trim()) notes.unshift({ reference, text: text.trim(), updatedAt: new Date().toISOString() });
+  await AsyncStorage.setItem(KEYS.scriptureNotes, JSON.stringify(notes));
+}
+export async function loadScriptureHighlights(): Promise<ScriptureHighlight[]> {
+  return JSON.parse((await AsyncStorage.getItem(KEYS.scriptureHighlights)) ?? "[]") as ScriptureHighlight[];
+}
+export async function setScriptureHighlight(reference: string, color: ScriptureHighlight["color"] | null): Promise<void> {
+  const items = (await loadScriptureHighlights()).filter(h => h.reference !== reference);
+  if (color) items.push({ reference, color });
+  await AsyncStorage.setItem(KEYS.scriptureHighlights, JSON.stringify(items));
+}
+export async function saveScripturePosition(book: string, chapter: number): Promise<void> {
+  await AsyncStorage.setItem(KEYS.scripturePosition, JSON.stringify({ book, chapter }));
+}
+export async function loadScripturePosition(): Promise<{ book: string; chapter: number } | null> {
+  const raw = await AsyncStorage.getItem(KEYS.scripturePosition);
+  return raw ? JSON.parse(raw) : null;
 }

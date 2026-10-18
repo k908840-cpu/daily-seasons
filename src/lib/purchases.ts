@@ -36,7 +36,9 @@ export async function purchaseLifetime(): Promise<boolean> {
   if (Platform.OS !== "android" || !connectionReady) return false;
   try {
     await RNIap.requestPurchase({ skus: [LIFETIME_SKU] });
-    // Never unlock merely because the purchase sheet was opened.\n    // Confirm Google Play ownership after checkout; pending purchases remain locked.\n    return await restorePurchases();
+    // Never unlock merely because the purchase sheet was opened.
+    // Confirm Google Play ownership after checkout; pending purchases remain locked.
+    return await restorePurchases();
   } catch {
     return false;
   }

@@ -28,6 +28,7 @@ export default function PrayerDetailScreen() {
     <View style={{ backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1, borderRadius: 20, padding: 20, marginTop: 22 }}>
       <Text style={{ color: colors.text, fontSize: 17, lineHeight: 29 }}>{pending ? "This prayer's wording and source are being verified. The full text is not yet available." : prayer.text}</Text>
     </View>
+    {!pending && <Text style={{ color: colors.muted, fontSize: 12, lineHeight: 19, marginTop: 12 }}>{prayer.sourceId === "daily-seasons-original" ? "Original contemporary prayer written for Daily Seasons · Shared Christian" : `Source: ${prayer.sourceId}`}</Text>}
     <Pressable onPress={() => void bookmark()} style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 13, padding: 15, marginTop: 18 }}>
       <Text style={{ color: colors.accent, fontWeight: "600", textAlign: "center" }}>{saved ? "♥ Saved to Faith Vault" : "♡ Save prayer"}</Text>
     </Pressable>

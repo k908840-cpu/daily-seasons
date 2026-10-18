@@ -131,6 +131,12 @@ export default function HomeScreen() {
         )}
       </View>
 
+      <Pressable onPress={() => router.push("/scripture")} style={{ backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1, borderRadius: 18, padding: 18, marginBottom: 26 }}>
+        <Text style={{ color: colors.accent, fontSize: 11, fontWeight: "700", letterSpacing: 1.5 }}>EXPLORE SCRIPTURE</Text>
+        <Text style={{ color: colors.text, fontSize: 20, fontWeight: "600", marginTop: 7 }}>Open the Bible  →</Text>
+        <Text style={{ color: colors.muted, fontSize: 13, marginTop: 6 }}>Browse books and chapters</Text>
+      </Pressable>
+
       <View style={styles.sectionHeader}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
           The journey to Christmas

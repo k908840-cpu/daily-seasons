@@ -1,6 +1,7 @@
 import { Stack, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { AppProvider, useApp } from "@/context/AppContext";
 
 function RootNavigator() {
@@ -17,6 +18,7 @@ function RootNavigator() {
   return (
     <>
       <StatusBar style={isDark ? "light" : "dark"} />
+      <SafeAreaView edges={["top"]} style={{ flex: 1 }}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="onboarding" />
         <Stack.Screen name="(tabs)" />
@@ -27,14 +29,17 @@ function RootNavigator() {
         <Stack.Screen name="timer" options={{ headerShown: true, title: "Prayer timer" }} />
         <Stack.Screen name="prayer/[id]" options={{ headerShown: true, title: "Prayer" }} />
       </Stack>
+      </SafeAreaView>
     </>
   );
 }
 
 export default function RootLayout() {
   return (
-    <AppProvider>
-      <RootNavigator />
-    </AppProvider>
+    <SafeAreaProvider>
+      <AppProvider>
+        <RootNavigator />
+      </AppProvider>
+    </SafeAreaProvider>
   );
 }

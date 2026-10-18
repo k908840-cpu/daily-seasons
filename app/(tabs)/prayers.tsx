@@ -1,52 +1,155 @@
-import { FlatList, Pressable, StyleSheet, View } from "react-native";
+import React, { useMemo, useState } from "react";
+import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { Screen } from "@/components/Screen";
-import { Body, Muted, Title } from "@/components/Typography";
-import { DAILY_PRAYERS, LIBRARY_PRAYERS } from "@/data/prayers";
 import { useApp } from "@/context/AppContext";
+import { DAILY_PRAYERS, LIBRARY_PRAYERS } from "@/data/prayers";
+
+type Category = "All" | "Daily" | "Library";
+const categories: Category[] = ["All", "Daily", "Library"];
 
 export default function PrayersScreen() {
   const router = useRouter();
   const { colors } = useApp();
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState<Category>("All");
+
+  const entries = useMemo(() => {
+    const items = [
+      ...DAILY_PRAYERS.map((prayer) => ({ ...prayer, group: "Daily" as const })),
+      ...LIBRARY_PRAYERS.map((prayer) => ({ ...prayer, group: "Library" as const })),
+    ];
+    return items.filter((prayer) =>
+      (category === "All" || prayer.group === category) &&
+      prayer.title.toLowerCase().includes(query.trim().toLowerCase())
+    );
+  }, [query, category]);
 
   return (
-    <Screen>
-      <View style={styles.pad}>
-        <Title>Daily prayers</Title>
-        {DAILY_PRAYERS.map((p) => (
-          <Pressable
-            key={p.id}
-            onPress={() => router.push(`/prayer/${p.id}`)}
-            style={[styles.row, { borderColor: colors.border }]}
-          >
-            <Body>{p.title}</Body>
-          </Pressable>
-        ))}
-
-        <Title style={styles.libTitle}>Library</Title>
-        <Muted>Traditional prayers (~30). Text pending your content files.</Muted>
-        <FlatList
-          data={LIBRARY_PRAYERS}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
+      <FlatList
+        data={entries}
+        keyExtractor={(item) => item.id}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={styles.content}
+        ListHeaderComponent={
+          <>
+            <View style={[styles.hero, { backgroundColor: colors.accent }]}>
+              <View style={styles.heroIcon}>
+                <Ionicons name="book-outline" size={25} color="#fff" />
+              </View>
+              <Text style={styles.eyebrow}>THE PRAYER LIBRARY</Text>
+              <Text style={styles.heroTitle}>Find your quiet moment.</Text>
+              <Text style={styles.heroCopy}>A place to pause, reflect, and return to prayer.</Text>
+            </View>
+            <Text style={[styles.heading, { color: colors.text }]}>Explore prayers</Text>
+            <Text style={[styles.description, { color: colors.muted }]}>
+              Daily devotion and prayers from Christian traditions.
+            </Text>
+            <View style={[styles.search, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <Ionicons name="search-outline" size={20} color={colors.muted} />
+              <TextInput
+                style={[styles.searchInput, { color: colors.text }]}
+                value={query}
+                onChangeText={setQuery}
+                placeholder="Search by prayer name"
+                placeholderTextColor={colors.muted}
+                accessibilityLabel="Search prayers"
+              />
+              {query.length > 0 && (
+                <Pressable onPress={() => setQuery("")} accessibilityLabel="Clear search">
+                  <Ionicons name="close-circle" size={20} color={colors.muted} />
+                </Pressable>
+              )}
+            </View>
+            <View style={styles.filters}>
+              {categories.map((option) => (
+                <Pressable
+                  key={option}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: category === option }}
+                  onPress={() => setCategory(option)}
+                  style={[
+                    styles.chip,
+                    {
+                      backgroundColor: category === option ? colors.accent : colors.card,
+                      borderColor: category === option ? colors.accent : colors.border,
+                    },
+                  ]}
+                >
+                  <Text style={{ color: category === option ? "#fff" : colors.text, fontWeight: "600" }}>
+                    {option}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            <View style={styles.listHeading}>
+              <Text style={[styles.listTitle, { color: colors.text }]}>Prayer collection</Text>
+              <Text style={[styles.count, { color: colors.muted }]}>{entries.length} entries</Text>
+            </View>
+          </>
+        }
+        renderItem={({ item }) => {
+          const pending = item.sourceId === "placeholder";
+          return (
             <Pressable
-              onPress={() => router.push(`/prayer/${item.id}`)}
-              style={[styles.row, { borderColor: colors.border }]}
+              accessibilityRole="button"
+              accessibilityLabel={item.title + (pending ? ", text not yet available" : "")}
+              onPress={() => router.push({ pathname: "/prayer/[id]", params: { id: item.id } })}
+              style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}
             >
-              <Body>{item.title}</Body>
+              <View style={[styles.symbol, { backgroundColor: colors.background }]}>
+                <Ionicons
+                  name={item.group === "Daily" ? "sunny-outline" : "book-outline"}
+                  size={22}
+                  color={colors.accent}
+                />
+              </View>
+              <View style={styles.cardBody}>
+                <Text style={[styles.cardTitle, { color: colors.text }]}>{item.title}</Text>
+                <Text style={[styles.cardCaption, { color: colors.muted }]}>
+                  {item.group}{pending ? " · Text pending verification" : ""}
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.muted} />
             </Pressable>
-          )}
-        />
-      </View>
-    </Screen>
+          );
+        }}
+        ListEmptyComponent={
+          <Text style={[styles.empty, { color: colors.muted }]}>No matching prayers. Try another search.</Text>
+        }
+        ListFooterComponent={
+          <Text style={[styles.footer, { color: colors.muted }]}>
+            Prayer texts marked as pending will be added after source verification.
+          </Text>
+        }
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  pad: { flex: 1, padding: 20 },
-  row: {
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-  },
-  libTitle: { marginTop: 24 },
+  root: { flex: 1 },
+  content: { paddingHorizontal: 20, paddingTop: 22, paddingBottom: 50 },
+  hero: { borderRadius: 26, padding: 24, minHeight: 205, justifyContent: "center", marginBottom: 30 },
+  heroIcon: { marginBottom: 14 },
+  eyebrow: { color: "#DDE9E1", fontSize: 11, fontWeight: "700", letterSpacing: 2, marginBottom: 8 },
+  heroTitle: { color: "#fff", fontSize: 30, fontWeight: "700", letterSpacing: -0.8, lineHeight: 36 },
+  heroCopy: { color: "#ECF2ED", fontSize: 14, lineHeight: 21, marginTop: 9 },
+  heading: { fontSize: 25, fontWeight: "700", letterSpacing: -0.5 },
+  description: { fontSize: 14, lineHeight: 21, marginTop: 6, marginBottom: 20 },
+  search: { height: 54, borderRadius: 16, borderWidth: 1, flexDirection: "row", alignItems: "center", paddingHorizontal: 15, gap: 10 },
+  searchInput: { flex: 1, fontSize: 15 },
+  filters: { flexDirection: "row", gap: 9, marginTop: 15, marginBottom: 28 },
+  chip: { paddingVertical: 10, paddingHorizontal: 18, borderRadius: 24, borderWidth: 1 },
+  listHeading: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 15 },
+  listTitle: { fontSize: 20, fontWeight: "700" },
+  count: { fontSize: 13 },
+  card: { borderWidth: 1, borderRadius: 18, padding: 14, marginBottom: 10, flexDirection: "row", alignItems: "center", gap: 12 },
+  symbol: { width: 46, height: 46, borderRadius: 14, alignItems: "center", justifyContent: "center" },
+  cardBody: { flex: 1 },
+  cardTitle: { fontSize: 16, fontWeight: "600" },
+  cardCaption: { fontSize: 12, marginTop: 5 },
+  empty: { textAlign: "center", marginVertical: 28 },
+  footer: { fontSize: 12, textAlign: "center", lineHeight: 18, marginTop: 22 },
 });

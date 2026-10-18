@@ -13,10 +13,10 @@ const steps = [
   { title: "Rest in silence", detail: "Spend the remaining time quietly. There is nothing you need to achieve." },
 ];
 export default function DailyPathScreen() {
-  const { colors } = useApp();
+  const { colors, settings, updateSettings } = useApp();
   const router = useRouter();
   const date = new Date().toISOString().slice(0, 10);
-  const [duration, setDuration] = useState(5);
+  const [duration, setDuration] = useState(settings.preferredDuration ?? 5);
   const [completed, setCompleted] = useState<number[]>([]);
   const [loaded, setLoaded] = useState(false);
   useEffect(() => { void loadDailyPathProgress().then(p => { if (p?.date === date) { setDuration(p.duration); setCompleted(p.completedSteps); } setLoaded(true); }); }, [date]);
@@ -27,7 +27,7 @@ export default function DailyPathScreen() {
     <Text style={{ color: colors.text, fontSize: 30, fontWeight: "600", marginTop: 10 }}>My Daily Path</Text>
     <Text style={{ color: colors.muted, lineHeight: 22, marginTop: 9 }}>Five simple steps. No streaks, pressure or perfect days required.</Text>
     <View style={{ flexDirection: "row", gap: 9, marginTop: 23 }}>
-      {[2, 5, 10, 15].map(n => <Pressable key={n} onPress={() => setDuration(n)} style={{ flex: 1, backgroundColor: duration === n ? colors.accent : colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: 12, paddingVertical: 12 }}>
+      {[2, 5, 10, 15].map(n => <Pressable key={n} onPress={() => { setDuration(n); void updateSettings({ preferredDuration: n }); }} style={{ flex: 1, backgroundColor: duration === n ? colors.accent : colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: 12, paddingVertical: 12 }}>
         <Text style={{ color: duration === n ? "#fff" : colors.text, textAlign: "center" }}>{n} min</Text>
       </Pressable>)}
     </View>

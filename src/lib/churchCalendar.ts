@@ -53,7 +53,7 @@ export function previousSunday(date: Date): Date {
 /** Fourth Sunday before Dec 25 (Advent begins). */
 export function computeAdventStart(year: number): Date {
   const christmas = new Date(year, 11, 25);
-  const fourthSundayBefore = addDays(previousSunday(christmas), -21);
+  const fourthSundayBefore = addDays(previousSunday(addDays(christmas, -1)), -21);
   return fourthSundayBefore;
 }
 

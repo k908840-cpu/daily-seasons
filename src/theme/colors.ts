@@ -1,22 +1,21 @@
 export const palette = {
   light: {
-    background: "#f7f5f0",
-    card: "#ffffff",
-    text: "#2c2c34",
-    muted: "#6b6b76",
-    accent: "#3d5a4c",
-    gold: "#b8922a",
-    border: "#e0ddd4",
+    background: "#F8F6F3",
+    card: "#FFFFFF",
+    text: "#24273B",
+    muted: "#747588",
+    accent: "#52537D",
+    gold: "#C29B60",
+    border: "#E8E4E4",
   },
   dark: {
-    background: "#1a1a2e",
-    card: "#252538",
-    text: "#eceae4",
-    muted: "#a8a8b3",
-    accent: "#7aab8f",
-    gold: "#c9a227",
-    border: "#3a3a50",
+    background: "#181A2B",
+    card: "#25283D",
+    text: "#F4F0EE",
+    muted: "#B3AEC2",
+    accent: "#9795CE",
+    gold: "#D8B780",
+    border: "#3D3D54",
   },
 };
-
 export type ThemeColors = (typeof palette)["light"];

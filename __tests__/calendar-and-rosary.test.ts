@@ -9,6 +9,10 @@ describe("Western Christian calendar", () => {
     expect(formatDateISO(computePalmSunday(2026))).toBe("2026-03-29");
     expect(formatDateISO(addDays(easter, 49))).toBe("2026-05-24");
   });
+  test("Advent starts correctly when Christmas is a Sunday", () => {
+    expect(formatDateISO(computeAdventStart(2022))).toBe("2022-11-27");
+    expect(formatDateISO(computeAdventStart(2033))).toBe("2033-11-27");
+  });
   test("2026 Advent begins November 29", () => {
     expect(formatDateISO(computeAdventStart(2026))).toBe("2026-11-29");
     expect(getCurrentSeason(new Date(2026, 11, 1))?.id).toBe("advent");

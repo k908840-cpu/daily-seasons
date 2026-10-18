@@ -25,6 +25,11 @@ export interface UserSettings {
   reminderMinute: number;
   mode: AppMode;
   darkMode: "system" | "light" | "dark";
+  spiritualGoal?: string;
+  preferredPrayerTime?: string;
+  preferredInterest?: string;
+  preferredDuration?: number;
+  speechRate?: number;
 }
 
 export interface ProgressState {
@@ -59,6 +64,8 @@ const defaultSettings: UserSettings = {
   reminderMinute: 0,
   mode: "personal",
   darkMode: "system",
+  preferredDuration: 5,
+  speechRate: 0.9,
 };
 
 export async function loadSettings(): Promise<UserSettings> {

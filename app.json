@@ -15,12 +15,11 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundColor": "#1a1a2e"
       },
-      "package": "com.dailyseasons.advent",
+      "package": "com.dailyseasons.app",
       "permissions": [
-        "android.permission.SCHEDULE_EXACT_ALARM",
         "android.permission.POST_NOTIFICATIONS"
       ]
     },
@@ -41,10 +40,7 @@
       "typedRoutes": true
     },
     "extra": {
-      "eas": {
-        "projectId": "REPLACE_WITH_EAS_PROJECT_ID"
-      },
-      "privacyPolicyUrl": "https://example.com/privacy"
+      "eas": {}
     }
   }
 }

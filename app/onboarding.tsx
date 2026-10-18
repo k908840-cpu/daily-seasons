@@ -40,7 +40,7 @@ export default function OnboardingScreen() {
     setBusy(true);
     try {
       // Store only the choices needed for future local personalization.
-      await updateSettings({ onboardingComplete: true });
+      await updateSettings({ onboardingComplete: true, spiritualGoal: answers[0], preferredPrayerTime: answers[1], preferredInterest: answers[2] });
       router.replace("/(tabs)");
     } finally {
       setBusy(false);

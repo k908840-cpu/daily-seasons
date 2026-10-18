@@ -43,6 +43,6 @@ export default function VaultScreen() {
     {notes.map(n => card(n.reference, n.text))}
     {heading(`Past reflections (${entries.filter(e => e.dateISO !== today).length})`)}
     {entries.filter(e => e.dateISO !== today).sort((a, b) => b.dateISO.localeCompare(a.dateISO)).map(e => card(e.dateISO, e.line))}
-    <Text style={{ color: colors.muted, fontSize: 12, lineHeight: 19, marginTop: 24 }}>Stored locally. Backup/export and app-lock features are planned but not yet available. Uninstalling the app may delete this data.</Text>
+    <Text style={{ color: colors.muted, fontSize: 12, lineHeight: 19, marginTop: 24 }}>Stored locally. You can back up and restore this data from Settings. An app lock is not yet available. Uninstalling without a backup may delete this data.</Text>
   </Screen>;
 }

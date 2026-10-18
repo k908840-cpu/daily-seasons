@@ -36,9 +36,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     void (async () => {
-      await initPurchases();
-      setSettings(await loadSettings());
-      setPremium(await isPremiumUnlocked());
+      try { setSettings(await loadSettings()); }
+      catch { setSettings({ onboardingComplete: false, textSize: "normal", reminderHour: 7, reminderMinute: 0, mode: "personal", darkMode: "system", preferredDuration: 5, speechRate: 0.9 }); }
+      try { setPremium(await isPremiumUnlocked()); } catch { setPremium(false); }
+      // Billing initialization must never block the first render.
+      void initPurchases();
     })();
     return () => {
       void endPurchases();

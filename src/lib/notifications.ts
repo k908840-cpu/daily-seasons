@@ -1,27 +1,37 @@
-import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
 import { Platform } from "react-native";
 import type { UserSettings } from "./storage";
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
+// Expo Go on Android SDK 53 does not support push notifications.
+// Load the notifications module only in a development/production build.
+const inExpoGo = Constants.appOwnership === "expo";
+
+function notifications() {
+  const Notifications = require("expo-notifications") as typeof import("expo-notifications");
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+      shouldShowBanner: true,
+      shouldShowList: true,
+    }),
+  });
+  return Notifications;
+}
 
 export async function ensureNotificationPermission(): Promise<boolean> {
+  if (inExpoGo) return false;
+  const Notifications = notifications();
   const { status: existing } = await Notifications.getPermissionsAsync();
   if (existing === "granted") return true;
   const { status } = await Notifications.requestPermissionsAsync();
   return status === "granted";
 }
 
-export async function scheduleDailyReminder(
-  settings: UserSettings
-): Promise<void> {
+export async function scheduleDailyReminder(settings: UserSettings): Promise<void> {
+  if (inExpoGo) return;
+  const Notifications = notifications();
   await Notifications.cancelAllScheduledNotificationsAsync();
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("daily-reminder", {
@@ -29,9 +39,7 @@ export async function scheduleDailyReminder(
       importance: Notifications.AndroidImportance.DEFAULT,
     });
   }
-  const granted = await ensureNotificationPermission();
-  if (!granted) return;
-
+  if (!(await ensureNotificationPermission())) return;
   await Notifications.scheduleNotificationAsync({
     content: {
       title: "Daily Seasons",

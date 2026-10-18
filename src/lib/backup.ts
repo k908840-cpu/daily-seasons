@@ -25,16 +25,16 @@ function validate(key: Field, value: unknown): boolean {
       return plainObject(value) && typeof value.onboardingComplete === "boolean" &&
         ["normal","large"].includes(String(value.textSize)) &&
         ["system","light","dark"].includes(String(value.darkMode)) &&
-        Number.isInteger(value.reminderHour) && Number(value.reminderHour) >= 0 && Number(value.reminderHour) <= 23 &&
-        Number.isInteger(value.reminderMinute) && Number(value.reminderMinute) >= 0 && Number(value.reminderMinute) <= 59;
+        Number.isInteger(Number(value.reminderHour)) && Number(value.reminderHour) >= 0 && Number(value.reminderHour) <= 23 &&
+        Number.isInteger(Number(value.reminderMinute)) && Number(value.reminderMinute) >= 0 && Number(value.reminderMinute) <= 59;
     case "progress": return plainObject(value) && isList(value.readDays, isShortString);
     case "journal": return isList(value, v => plainObject(v) && isShortString(v.dateISO) && isShortString(v.line));
     case "bookmarks": return isList(value, v => plainObject(v) && isShortString(v.id) && isShortString(v.ref) && isShortString(v.title) && isShortString(v.createdAt) && ["daily","prayer","scripture"].includes(String(v.kind)));
     case "prayer_list": return isList(value, v => plainObject(v) && isShortString(v.id) && isShortString(v.name) && isShortString(v.intention) && typeof v.prayed === "boolean");
     case "scripture_notes": return isList(value, v => plainObject(v) && isShortString(v.reference) && isShortString(v.text) && isShortString(v.updatedAt));
     case "scripture_highlights": return isList(value, v => plainObject(v) && isShortString(v.reference) && ["gold","lavender","rose"].includes(String(v.color)));
-    case "scripture_position": return plainObject(value) && isShortString(value.book) && Number.isInteger(value.chapter) && Number(value.chapter) >= 1 && Number(value.chapter) <= 150;
-    case "rosary_session": return plainObject(value) && ["Joyful","Sorrowful","Glorious","Luminous"].includes(String(value.kind)) && Number.isInteger(value.step) && Number(value.step) >= 0 && Number(value.step) <= 100;
+    case "scripture_position": return plainObject(value) && isShortString(value.book) && Number.isInteger(Number(value.chapter)) && Number(value.chapter) >= 1 && Number(value.chapter) <= 150;
+    case "rosary_session": return plainObject(value) && ["Joyful","Sorrowful","Glorious","Luminous"].includes(String(value.kind)) && Number.isInteger(Number(value.step)) && Number(value.step) >= 0 && Number(value.step) <= 100;
     case "daily_path": return plainObject(value) && isShortString(value.date) && [2,5,10,15].includes(Number(value.duration)) && isList(value.completedSteps, n => Number.isInteger(n) && Number(n) >= 0 && Number(n) <= 4);
     case "novena_progress": return plainObject(value) && Object.values(value).every(x => isList(x, n => Number.isInteger(n) && Number(n) >= 1 && Number(n) <= 9));
     default: return false;

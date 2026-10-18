@@ -34,6 +34,21 @@ export default function SettingsScreen() {
           </Pressable>
         ))}
       </View>
+      <Text style={[styles.heading, { color: colors.text }]}>Personal prayer</Text>
+      <Text style={[styles.detail, { color: colors.muted }]}>Choose your preferred prayer length and interests. Recommendations stay on your device.</Text>
+      <View style={styles.times}>
+        {[2, 5, 10, 15].map(n => <Pressable key={n} onPress={() => void updateSettings({ preferredDuration: n })} style={[styles.time, { backgroundColor: settings.preferredDuration === n ? colors.accent : colors.card, borderColor: colors.border }]}>
+          <Text style={{ color: settings.preferredDuration === n ? "#fff" : colors.text }}>{n} min</Text>
+        </Pressable>)}
+      </View>
+      <View style={[styles.panel, { backgroundColor: colors.card, borderColor: colors.border, marginTop: 14 }]}>
+        {["Daily reflections", "Traditional prayers", "The Rosary", "Advent and Christmas", "Lent and Easter"].map((interest, i) => (
+          <Pressable key={interest} onPress={() => void updateSettings({ preferredInterest: interest })} style={[styles.row, i > 0 && { borderTopWidth: 1, borderTopColor: colors.border }]}>
+            <Text style={[styles.rowText, { color: colors.text }]}>{interest}</Text>
+            {settings.preferredInterest === interest && <Ionicons name="checkmark-circle" size={22} color={colors.accent} />}
+          </Pressable>
+        ))}
+      </View>
       <Text style={[styles.heading, { color: colors.text }]}>Daily reminder</Text>
       <Text style={[styles.detail, { color: colors.muted }]}>Choose a time for your daily reminder. Reminders require an installed app build and notification permission.</Text>
       <View style={styles.times}>

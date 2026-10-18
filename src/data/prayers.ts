@@ -48,11 +48,12 @@ function placeholderPrayer(
   };
 }
 
+/** Original contemporary prayers composed for Daily Seasons; not historical liturgical translations. */
 export const DAILY_PRAYERS: PrayerItem[] = [
-  placeholderPrayer("morning", "Morning Prayer", "daily"),
-  placeholderPrayer("evening", "Evening Prayer", "daily"),
-  placeholderPrayer("night", "Night Prayer", "daily"),
-  placeholderPrayer("examen", "Daily Examen", "examen"),
+  { id: "morning", title: "Morning Prayer", category: "daily", sourceId: "daily-seasons-original", text: "God of mercy, thank you for this new day. Give me wisdom in my choices, patience with others, and courage to do what is right. Help me notice those who need kindness and meet them with love. Amen." },
+  { id: "evening", title: "Evening Prayer", category: "daily", sourceId: "daily-seasons-original", text: "God of peace, I bring you the joys and burdens of this day. Thank you for every kindness received and every chance to give. Forgive what I have done poorly, guide me to make things right, and grant rest to all who are weary. Amen." },
+  { id: "night", title: "Night Prayer", category: "daily", sourceId: "daily-seasons-original", text: "Lord, as this day comes to an end, quiet my thoughts and ease my worries. Watch over those I love, those who are alone, and those who cannot sleep. May tomorrow find me ready to begin again with hope. Amen." },
+  { id: "examen", title: "Daily Examen", category: "examen", sourceId: "daily-seasons-original", text: "God, help me remember today with honesty and gratitude. Where did I experience love? When did I turn away from it? Show me one thing to give thanks for, one thing to make right, and one small step toward faithfulness tomorrow. Amen." },
 ];
 
 export const LIBRARY_PRAYERS: PrayerItem[] = libraryTitles.map((title, i) =>

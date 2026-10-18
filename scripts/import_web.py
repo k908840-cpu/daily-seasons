@@ -31,7 +31,7 @@ ALIASES = {
     "COL":"Colossians","1TH":"1 Thessalonians","2TH":"2 Thessalonians",
     "1TI":"1 Timothy","2TI":"2 Timothy","TIT":"Titus","PHM":"Philemon",
     "HEB":"Hebrews","JAS":"James","1PE":"1 Peter","2PE":"2 Peter",
-    "1JN":"1 John","2JN":"2 John","3JN":"3 John","JUD":"Jude","REV":"Revelation",
+    "1JN":"1 John","2JN":"2 John","3JN":"3 John","JUD":"Jude","REV":"Revelation",\n    # Alternate identifiers used by eBible VPL editions.\n    "SOS":"Song of Solomon","EZE":"Ezekiel","JOE":"Joel","NAH":"Nahum",\n    "MAR":"Mark","JOH":"John","PHI":"Philippians","JAM":"James",\n    "1JO":"1 John","2JO":"2 John","3JO":"3 John",\n    "4ES":"4 Esdras","4MA":"4 Maccabees",
 }
 # eBible BibleWorks VPL uses a reference followed by text, with a separator.
 PATTERN = re.compile(r"^(.+?)\s+(\d+):(\d+)(?:[-–]\d+)?\s+(.+)$")

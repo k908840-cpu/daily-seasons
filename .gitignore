@@ -8,3 +8,10 @@ web-build/
 *.log
 project-files.txt
 src/app-backup/
+
+# Android signing and service credentials
+*.jks
+*.keystore
+*service-account*.json
+google-services.json
+**/google-services.json

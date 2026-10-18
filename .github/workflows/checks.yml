@@ -17,3 +17,5 @@ jobs:
       - run: npm ci
       - name: TypeScript check
         run: npm run typecheck
+      - name: Calendar and prayer regression tests
+        run: npm test -- --runInBand --watch=false

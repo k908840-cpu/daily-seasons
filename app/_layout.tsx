@@ -29,6 +29,7 @@ function RootNavigator() {
         <Stack.Screen name="scripture" options={{ headerShown: true, title: "Scripture" }} />
         <Stack.Screen name="calendar" options={{ headerShown: true, title: "Christian calendar" }} />
         <Stack.Screen name="seasonal-journeys" options={{ headerShown: true, title: "Seasonal journeys" }} />
+        <Stack.Screen name="night-prayer" options={{ headerShown: true, title: "Night prayer" }} />
         <Stack.Screen name="daily-path" options={{ headerShown: true, title: "My Daily Path" }} />
         <Stack.Screen name="lectio" options={{ headerShown: true, title: "Lectio Divina" }} />
         <Stack.Screen name="novenas" options={{ headerShown: true, title: "Prayer journeys" }} />

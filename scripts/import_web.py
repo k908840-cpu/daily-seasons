@@ -62,7 +62,7 @@ def main():
             code, chapter, verse, words = match.groups()
             code = code.strip()
             book = ALIASES.get(code.upper(), code)
-            if not re.match(r"^[1-4]?\s*[A-Za-z][A-Za-z ]+$", book):
+            if not re.match(r"^[1-4]?\s*[A-Za-z][A-Za-z ]+(?:\s+\d+)?$", book):
                 unknown.add(code)
                 continue
             books.setdefault(book, {}).setdefault(str(int(chapter)), {})[str(int(verse))] = words.strip()

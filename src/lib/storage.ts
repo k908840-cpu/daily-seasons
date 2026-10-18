@@ -10,6 +10,9 @@ const KEYS = {
   scriptureNotes: "@daily_seasons/scripture_notes",
   scriptureHighlights: "@daily_seasons/scripture_highlights",
   scripturePosition: "@daily_seasons/scripture_position",
+  rosarySession: "@daily_seasons/rosary_session",
+  dailyPath: "@daily_seasons/daily_path",
+  novenaProgress: "@daily_seasons/novena_progress",
 } as const;
 
 export type TextSize = "normal" | "large";
@@ -167,4 +170,28 @@ export async function saveScripturePosition(book: string, chapter: number): Prom
 export async function loadScripturePosition(): Promise<{ book: string; chapter: number } | null> {
   const raw = await AsyncStorage.getItem(KEYS.scripturePosition);
   return raw ? JSON.parse(raw) : null;
+}
+
+export interface RosarySession { kind: "Joyful" | "Sorrowful" | "Glorious" | "Luminous"; step: number }
+export async function loadRosarySession(): Promise<RosarySession | null> {
+  const raw = await AsyncStorage.getItem(KEYS.rosarySession);
+  return raw ? JSON.parse(raw) as RosarySession : null;
+}
+export async function saveRosarySession(session: RosarySession): Promise<void> {
+  await AsyncStorage.setItem(KEYS.rosarySession, JSON.stringify(session));
+}
+export interface DailyPathProgress { date: string; duration: number; completedSteps: number[] }
+export async function loadDailyPathProgress(): Promise<DailyPathProgress | null> {
+  const raw = await AsyncStorage.getItem(KEYS.dailyPath);
+  return raw ? JSON.parse(raw) as DailyPathProgress : null;
+}
+export async function saveDailyPathProgress(progress: DailyPathProgress): Promise<void> {
+  await AsyncStorage.setItem(KEYS.dailyPath, JSON.stringify(progress));
+}
+export async function loadNovenaProgress(): Promise<Record<string, number[]>> {
+  const raw = await AsyncStorage.getItem(KEYS.novenaProgress);
+  return raw ? JSON.parse(raw) as Record<string, number[]> : {};
+}
+export async function saveNovenaProgress(progress: Record<string, number[]>): Promise<void> {
+  await AsyncStorage.setItem(KEYS.novenaProgress, JSON.stringify(progress));
 }

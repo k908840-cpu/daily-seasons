@@ -50,6 +50,19 @@ export default function ToolsScreen() {
         <View style={{ flex: 1 }}><Text style={[styles.featureTitle, { color: colors.text, marginTop: 0 }]}>My Faith Vault</Text><Text style={[styles.featureCaption, { color: colors.muted }]}>Journal, bookmarks & Scripture notes</Text></View>
         <Ionicons name="chevron-forward" size={20} color={colors.accent} />
       </Pressable>
+      <Text style={[styles.section, { color: colors.text }]}>Guided prayer</Text>
+      <Pressable onPress={() => router.push("/daily-path")} style={[styles.panel, { backgroundColor: colors.card, borderColor: colors.border, marginTop: 10 }]}>
+        <Text style={[styles.featureTitle, { color: colors.text, marginTop: 0 }]} >My Daily Path</Text>
+        <Text style={[styles.featureCaption, { color: colors.muted }]} >Daily prayer routine</Text>
+      </Pressable>
+      <Pressable onPress={() => router.push("/lectio")} style={[styles.panel, { backgroundColor: colors.card, borderColor: colors.border, marginTop: 10 }]}>
+        <Text style={[styles.featureTitle, { color: colors.text, marginTop: 0 }]} >Lectio Divina</Text>
+        <Text style={[styles.featureCaption, { color: colors.muted }]} >Prayerful Scripture reading</Text>
+      </Pressable>
+      <Pressable onPress={() => router.push("/novenas")} style={[styles.panel, { backgroundColor: colors.card, borderColor: colors.border, marginTop: 10 }]}>
+        <Text style={[styles.featureTitle, { color: colors.text, marginTop: 0 }]} >Nine-day prayer journeys</Text>
+        <Text style={[styles.featureCaption, { color: colors.muted }]} >Gratitude and peace</Text>
+      </Pressable>
       <Text style={[styles.section, { color: colors.text }]}>Your prayer intentions</Text>
       <Text style={[styles.description, { color: colors.muted }]}>Private and saved on this device.</Text>
       <View style={[styles.panel, { backgroundColor: colors.card, borderColor: colors.border }]}>

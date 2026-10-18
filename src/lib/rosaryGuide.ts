@@ -25,5 +25,5 @@ export function buildRosary(kind: MysteryKind): RosaryStep[] {
   return steps;
 }
 export function suggestedMystery(day: number): MysteryKind {
-  return (["Glorious", "Joyful", "Sorrowful", "Glorious", "Luminous", "Sorrowful", "Glorious"] as MysteryKind[])[day];
+  return (["Glorious", "Joyful", "Sorrowful", "Glorious", "Luminous", "Sorrowful", "Joyful"] as MysteryKind[])[day];
 }

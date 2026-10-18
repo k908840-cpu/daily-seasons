@@ -32,7 +32,8 @@ ALIASES = {
     "1TI":"1 Timothy","2TI":"2 Timothy","TIT":"Titus","PHM":"Philemon",
     "HEB":"Hebrews","JAS":"James","1PE":"1 Peter","2PE":"2 Peter",
     "1JN":"1 John","2JN":"2 John","3JN":"3 John","JUD":"Jude","REV":"Revelation",
-    # Alternate identifiers used by eBible VPL editions.\n    "SOS":"Song of Solomon","EZE":"Ezekiel","JOE":"Joel","NAH":"Nahum",
+    # Alternate identifiers used by eBible VPL editions.
+    "SOS":"Song of Solomon","EZE":"Ezekiel","JOE":"Joel","NAH":"Nahum",
     "MAR":"Mark","JOH":"John","PHI":"Philippians","JAM":"James",
     "1JO":"1 John","2JO":"2 John","3JO":"3 John",
     "4ES":"4 Esdras","4MA":"4 Maccabees",
@@ -57,13 +58,13 @@ def main():
             code, chapter, verse, words = match.groups()
             code = code.strip()
             book = ALIASES.get(code.upper(), code)
-            if not re.match(r"^[1-3]?\s*[A-Za-z][A-Za-z ]+$", book):
+            if not re.match(r"^[1-4]?\s*[A-Za-z][A-Za-z ]+$", book):
                 unknown.add(code)
                 continue
             books.setdefault(book, {}).setdefault(str(int(chapter)), {})[str(int(verse))] = words.strip()
     count = sum(len(v) for b in books.values() for v in b.values())
-    missing = [b for b in ALIASES.values() if b not in books]
-    if missing or count < 30000:
+    missing = sorted(set(ALIASES.values()) - set(books))
+    if missing or unknown or count < 30000:
         raise RuntimeError(f"Import incomplete: {count} verses, missing {missing[:15]}, unknown identifiers {sorted(unknown)[:15]}. Inspect archive format; do not ship partial text.")
     DEST.write_text(json.dumps(books, ensure_ascii=False, separators=(",",":")), encoding="utf-8")
     print(f"Wrote {count} verses in {len(books)} books to {DEST}")

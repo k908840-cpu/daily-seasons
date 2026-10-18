@@ -70,7 +70,7 @@ export function computeHolySaturday(year: number): Date {
 }
 
 export function computeChristmasSeasonEnd(year: number): Date {
-  return new Date(year + 1, 0, 6);
+  return new Date(year + 1, 0, 5);
 }
 
 export function startOfDay(d: Date): Date {

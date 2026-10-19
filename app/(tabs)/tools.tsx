@@ -45,7 +45,7 @@ export default function ToolsScreen() {
           <Ionicons name="arrow-forward" size={18} color={colors.accent} />
         </Pressable>
       </View>
-      <Pressable onPress={() => router.push("/vault")} style={[styles.panel, { backgroundColor: colors.card, borderColor: colors.border, marginTop: 20, flexDirection: "row", alignItems: "center", gap: 12 }]}>
+      <Pressable onPress={() => router.push("/vault")} style={[styles.panel, { backgroundColor: colors.card, borderColor: colors.border, marginTop: 12, flexDirection: "row", alignItems: "center", gap: 12 }]}>
         <Ionicons name="journal-outline" size={27} color={colors.accent} />
         <View style={{ flex: 1 }}><Text style={[styles.featureTitle, { color: colors.text, marginTop: 0 }]}>My Faith Vault</Text><Text style={[styles.featureCaption, { color: colors.muted }]}>Journal, bookmarks & Scripture notes</Text></View>
         <Ionicons name="chevron-forward" size={20} color={colors.accent} />
@@ -96,10 +96,10 @@ export default function ToolsScreen() {
 }
 const styles = StyleSheet.create({
   page: { padding: 22, paddingBottom: 60 }, eyebrow: { fontSize: 11, fontWeight: "700", letterSpacing: 2.2, marginBottom: 9 },
-  title: { fontSize: 32, fontWeight: "600", letterSpacing: -0.7 }, intro: { fontSize: 15, lineHeight: 23, marginTop: 8, marginBottom: 27 },
-  grid: { flexDirection: "row", gap: 12 }, feature: { flex: 1, minHeight: 187, borderRadius: 22, borderWidth: 1, padding: 17, justifyContent: "space-between" },
+  title: { fontSize: 32, fontWeight: "600", letterSpacing: -0.7 }, intro: { fontSize: 15, lineHeight: 23, marginTop: 8, marginBottom: 18 },
+  grid: { flexDirection: "row", gap: 12 }, feature: { flex: 1, minHeight: 150, borderRadius: 22, borderWidth: 1, padding: 17, justifyContent: "space-between" },
   featureTitle: { fontSize: 18, fontWeight: "600", marginTop: 12 }, featureCaption: { fontSize: 12, lineHeight: 18, marginTop: 4, marginBottom: 8 },
-  section: { fontSize: 23, fontWeight: "600", marginTop: 35 }, description: { fontSize: 14, marginTop: 6, marginBottom: 16 },
+  section: { fontSize: 23, fontWeight: "600", marginTop: 24 }, description: { fontSize: 14, marginTop: 6, marginBottom: 16 },
   panel: { borderWidth: 1, borderRadius: 22, padding: 16, gap: 11 }, input: { borderWidth: 1, borderRadius: 13, minHeight: 49, paddingHorizontal: 14, paddingVertical: 11, fontSize: 14 },
   add: { borderRadius: 14, minHeight: 50, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 7 },
   addText: { color: "#fff", fontWeight: "700", fontSize: 15 }, empty: { textAlign: "center", marginTop: 25, fontSize: 14 },

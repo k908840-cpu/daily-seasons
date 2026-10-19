@@ -44,8 +44,13 @@ export default function ScriptureScreen() {
   const verses = useMemo(() => readChapter(book, chapter), [book, chapter]);
   const verseMatches = useMemo(() => searchBible(verseQuery), [verseQuery]);
   const changeReference = (b: string, n: number) => {
-    if (noteRef.current.note.trim()) void saveScriptureNote(noteRef.current.reference, noteRef.current.note);
-    setBook(b); setChapter(Math.min(Math.max(1, n), chapterCount(b) || 1)); setSearch("");
+    if (noteRef.current.reference !== `${b} ${n}`) {
+      void saveScriptureNote(noteRef.current.reference, noteRef.current.note);
+      noteRef.current = { reference: `${b} ${n}`, note: "" };
+    }
+    const safeChapter = Math.min(Math.max(1, n), chapterCount(b) || 1);
+    noteRef.current.reference = `${b} ${safeChapter}`;
+    setBook(b); setChapter(safeChapter); setSearch("");
   };
   const choose = (b: string) => changeReference(b, 1);
   const bookmark = async () => {
@@ -60,7 +65,7 @@ export default function ScriptureScreen() {
   const parseReference = () => {
     const match = search.trim().match(/^(.+?)\s+(\d+)$/);
     if (!match) return;
-    const selected = BOOKS.find(b => b.toLowerCase() === match[1].toLowerCase());
+    const selected = (showAdditional ? ALL_BIBLE_BOOKS : BOOKS).find(b => b.toLowerCase() === match[1].toLowerCase());
     if (selected && Number.isSafeInteger(Number(match[2])) && Number(match[2]) > 0 && Number(match[2]) <= chapterCount(selected)) changeReference(selected, Number(match[2]));
   };
   const action = (label: string, onPress: () => void, active = false) => (

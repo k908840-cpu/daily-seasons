@@ -33,7 +33,7 @@ export default function PrayerDetailScreen() {
       <Text style={{ color: colors.accent, fontWeight: "600", textAlign: "center" }}>{saved ? "♥ Saved to Faith Vault" : "♡ Save prayer"}</Text>
     </Pressable>
     {!pending && <>
-      <Pressable onPress={() => { Speech.stop(); Speech.speak(prayer.text, { rate: settings.textSize === "large" ? 0.9 : 0.95 }); }} style={{ backgroundColor: colors.accent, borderRadius: 13, padding: 15, marginTop: 10 }}>
+      <Pressable onPress={() => { Speech.stop(); Speech.speak(prayer.text, { rate: settings.speechRate ?? 0.9, language: settings.speechLocale === "device" ? undefined : (settings.speechLocale ?? "en-US") }); }} style={{ backgroundColor: colors.accent, borderRadius: 13, padding: 15, marginTop: 10 }}>
         <Text style={{ color: "#fff", fontWeight: "700", textAlign: "center" }}>Read aloud</Text>
       </Pressable>
       <Pressable onPress={() => void Speech.stop()} style={{ padding: 14 }}><Text style={{ color: colors.muted, textAlign: "center" }}>Stop audio</Text></Pressable>

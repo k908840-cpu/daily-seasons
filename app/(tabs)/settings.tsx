@@ -34,6 +34,17 @@ export default function SettingsScreen() {
           </Pressable>
         ))}
       </View>
+      <Text style={[styles.heading, { color: colors.text }]}>Narration voice</Text>
+      <Text style={[styles.detail, { color: colors.muted }]}>Choose the English accent used for spoken prayers. Available voices depend on your phone's speech engine.</Text>
+      <View style={[styles.panel, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        {([["en-US", "American English"], ["en-GB", "British English"], ["device", "Device default"]] as const).map(([locale, label], i) => (
+          <Pressable key={locale} accessibilityRole="radio" accessibilityState={{ checked: (settings.speechLocale ?? "en-US") === locale }} onPress={() => void updateSettings({ speechLocale: locale })} style={[styles.row, i > 0 && { borderTopWidth: 1, borderTopColor: colors.border }]}>
+            <Ionicons name="volume-medium-outline" size={21} color={colors.accent} />
+            <Text style={[styles.rowText, { color: colors.text }]}>{label}</Text>
+            {(settings.speechLocale ?? "en-US") === locale && <Ionicons name="checkmark-circle" size={22} color={colors.accent} />}
+          </Pressable>
+        ))}
+      </View>
       <Text style={[styles.heading, { color: colors.text }]}>Personal prayer</Text>
       <Text style={[styles.detail, { color: colors.muted }]}>Choose your preferred prayer length and interests. Recommendations stay on your device.</Text>
       <View style={styles.times}>

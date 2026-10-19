@@ -44,13 +44,15 @@ export default function ScriptureScreen() {
   const verses = useMemo(() => readChapter(book, chapter), [book, chapter]);
   const verseMatches = useMemo(() => searchBible(verseQuery), [verseQuery]);
   const changeReference = (b: string, n: number) => {
-    if (noteRef.current.reference !== `${b} ${n}`) {
-      void saveScriptureNote(noteRef.current.reference, noteRef.current.note);
-      noteRef.current = { reference: `${b} ${n}`, note: "" };
-    }
     const safeChapter = Math.min(Math.max(1, n), chapterCount(b) || 1);
-    noteRef.current.reference = `${b} ${safeChapter}`;
-    setBook(b); setChapter(safeChapter); setSearch("");
+    const nextReference = `${b} ${safeChapter}`;
+    if (noteRef.current.reference !== nextReference) {
+      void saveScriptureNote(noteRef.current.reference, noteRef.current.note);
+      noteRef.current = { reference: nextReference, note: "" };
+    }
+    setBook(b);
+    setChapter(safeChapter);
+    setSearch("");
   };
   const choose = (b: string) => changeReference(b, 1);
   const bookmark = async () => {

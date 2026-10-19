@@ -107,7 +107,7 @@ export default function ScriptureScreen() {
     {action(showAdditional ? "Show 66-book collection" : "Include additional books", () => setShowAdditional(v => !v), showAdditional)}
     <Text style={{ color: colors.text, fontSize: 20, fontWeight: "600", marginTop: 22 }}>Search Bible verses offline</Text>
     <TextInput value={verseQuery} onChangeText={setVerseQuery} placeholder="Enter at least 3 characters" placeholderTextColor={colors.muted} style={{ color: colors.text, backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1, borderRadius: 13, padding: 14, marginVertical: 10 }} />
-    {verseMatches.map(item => <Pressable key={item.reference} onPress={() => { const match = item.reference.match(/^(.+) (\\d+):(\\d+)$/); if (match) changeReference(match[1], Number(match[2])); }} style={{ paddingVertical: 12, borderBottomColor: colors.border, borderBottomWidth: 1 }}><Text style={{ color: colors.accent, fontWeight: "700" }}>{item.reference}</Text><Text style={{ color: colors.text, lineHeight: 22 }}>{item.text}</Text></Pressable>)}
+    {verseMatches.map(item => <Pressable key={item.reference} onPress={() => { const match = item.reference.match(/^(.+) (\d+):(\d+)$/); if (match) changeReference(match[1], Number(match[2])); }} style={{ paddingVertical: 12, borderBottomColor: colors.border, borderBottomWidth: 1 }}><Text style={{ color: colors.accent, fontWeight: "700" }}>{item.reference}</Text><Text style={{ color: colors.text, lineHeight: 22 }}>{item.text}</Text></Pressable>)}
     {matches.map(b => <Pressable key={b} onPress={() => choose(b)} style={{ padding: 15, borderBottomColor: colors.border, borderBottomWidth: 1 }}>
       <Text style={{ color: colors.text }}>{b}</Text>
     </Pressable>)}

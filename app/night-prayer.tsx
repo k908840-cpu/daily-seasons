@@ -21,7 +21,7 @@ export default function NightPrayerScreen() {
   const play = () => {
     stop();
     setPlaying(true);
-    Speech.speak(reflections[index].text, { rate, onDone: () => setPlaying(false), onStopped: () => setPlaying(false), onError: () => setPlaying(false) });
+    Speech.speak(reflections[index].text, { rate, language: settings.speechLocale === "device" ? undefined : (settings.speechLocale ?? "en-US"), onDone: () => setPlaying(false), onStopped: () => setPlaying(false), onError: () => setPlaying(false) });
     if (minutes > 0) deadline.current = setTimeout(stop, minutes * 60000);
   };
   return <Screen scroll style={{ padding: 22, paddingBottom: 60 }}>

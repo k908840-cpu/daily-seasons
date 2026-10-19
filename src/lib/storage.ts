@@ -30,6 +30,7 @@ export interface UserSettings {
   preferredInterest?: string;
   preferredDuration?: number;
   speechRate?: number;
+  speechLocale?: "en-US" | "en-GB" | "device";
 }
 
 export interface ProgressState {
@@ -66,6 +67,7 @@ const defaultSettings: UserSettings = {
   darkMode: "system",
   preferredDuration: 5,
   speechRate: 0.9,
+  speechLocale: "en-US",
 };
 
 export async function loadSettings(): Promise<UserSettings> {

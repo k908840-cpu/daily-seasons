@@ -120,7 +120,7 @@ export default function PrayersScreen() {
         }
         ListFooterComponent={
           <Text style={[styles.footer, { color: colors.muted }]}>
-            Prayer texts marked as pending will be added after source verification.
+            Original prayers are available now. Historical texts will be added after source and translation verification.
           </Text>
         }
       />

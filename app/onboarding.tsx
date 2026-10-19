@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Animated, Easing, Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Screen } from "@/components/Screen";
@@ -35,6 +35,20 @@ export default function OnboardingScreen() {
   const [busy, setBusy] = useState(false);
 
   const current = steps[step];
+  const entrance = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    entrance.setValue(0);
+    Animated.timing(entrance, { toValue: 1, duration: 380, easing: Easing.out(Easing.cubic), useNativeDriver: true }).start();
+  }, [step, entrance]);
+  const response = step === 0 ? "A meaningful place to begin." : step === 1 ? "We'll make room for your rhythm." : "Your path can change whenever you like.";
+  const iconFor = (option: string): React.ComponentProps<typeof Ionicons>["name"] => {
+    if (/peace|evening|night/i.test(option)) return "moon-outline";
+    if (/Scripture|reflections|closer/i.test(option)) return "book-outline";
+    if (/morning|Christmas|Advent/i.test(option)) return "sunny-outline";
+    if (/Rosary|prayer|habit/i.test(option)) return "heart-outline";
+    if (/seasons|Lent|Easter/i.test(option)) return "leaf-outline";
+    return "sparkles-outline";
+  };
   const finish = async () => {
     if (busy) return;
     setBusy(true);
@@ -86,7 +100,7 @@ export default function OnboardingScreen() {
                   onPress={() => setSelected(option)}
                   style={[styles.option, { backgroundColor: colors.card, borderColor: active ? colors.accent : colors.border }]}
                 >
-                  <Text style={[styles.optionText, { color: colors.text }]}>{option}</Text>
+                  <Ionicons name={iconFor(option)} size={23} color={active ? colors.accent : colors.muted} />\n                  <Text style={[styles.optionText, { color: colors.text }]}>{option}</Text>
                   <Ionicons name={active ? "checkmark-circle" : "ellipse-outline"} size={23} color={active ? colors.accent : colors.muted} />
                 </Pressable>
               );
@@ -147,7 +161,7 @@ const styles = StyleSheet.create({
   optionText: { flex: 1, fontSize: 16, fontWeight: "500", lineHeight: 23 },
   button: { marginTop: 32, borderRadius: 18, minHeight: 60, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 12 },
   buttonText: { color: "#FFFFFF", fontSize: 16, fontWeight: "700" },
-  back: { alignSelf: "center", padding: 16, marginTop: 6 },
+  selectionFeedback: { fontSize: 14, fontWeight: "600", marginTop: 18 },\n  back: { alignSelf: "center", padding: 16, marginTop: 6 },
   backText: { fontSize: 14 },
   symbol: { width: 84, height: 84, borderRadius: 26, borderWidth: 1, alignItems: "center", justifyContent: "center", marginBottom: 32 },
   note: { flexDirection: "row", gap: 13, padding: 18, borderRadius: 18, borderWidth: 1, alignItems: "flex-start" },

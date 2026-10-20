@@ -3,12 +3,10 @@ import { Body, Muted, Title } from "@/components/Typography";
 import { SOURCES } from "@/data/sources";
 import { StyleSheet, View } from "react-native";
 import { useApp } from "@/context/AppContext";
-import Constants from "expo-constants";
+
 
 export default function SourcesScreen() {
   const { colors } = useApp();
-  const privacy =
-    Constants.expoConfig?.extra?.privacyPolicyUrl ?? "https://example.com/privacy";
 
   return (
     <Screen scroll>
@@ -30,8 +28,7 @@ export default function SourcesScreen() {
       <View style={[styles.block, { borderColor: colors.border }]}>
         <Body style={styles.label}>Privacy</Body>
         <Muted>
-          No analytics, accounts, or cloud sync. Notes and settings stay on your
-          phone. Policy: {privacy}
+          No accounts, advertising, analytics, or automatic cloud sync are built into Daily Seasons. Your journal, bookmarks, and settings are stored locally. Optional backup sharing uses your phone’s share sheet and may send data to the service you select. Reminders use local notification permissions. The full privacy notice is included in the project and must be published at a public URL before Play Store submission.
         </Muted>
       </View>
     </Screen>

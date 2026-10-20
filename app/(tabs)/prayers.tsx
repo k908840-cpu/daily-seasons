@@ -5,8 +5,8 @@ import { useRouter } from "expo-router";
 import { useApp } from "@/context/AppContext";
 import { DAILY_PRAYERS, LIBRARY_PRAYERS } from "@/data/prayers";
 
-type Category = "All" | "Daily" | "Library";
-const categories: Category[] = ["All", "Daily", "Library"];
+type Category = "All" | "Daily" | "Library" | "Traditional";
+const categories: Category[] = ["All", "Daily", "Library", "Traditional"];
 
 export default function PrayersScreen() {
   const router = useRouter();
@@ -20,7 +20,7 @@ export default function PrayersScreen() {
       ...LIBRARY_PRAYERS.map((prayer) => ({ ...prayer, group: "Library" as const })),
     ];
     return items.filter((prayer) =>
-      (category === "All" || prayer.group === category) &&
+      (category === "All" || (category === "Traditional" ? prayer.sourceId !== "daily-seasons-original" : prayer.group === category)) &&
       prayer.title.toLowerCase().includes(query.trim().toLowerCase())
     );
   }, [query, category]);
@@ -44,7 +44,7 @@ export default function PrayersScreen() {
             </View>
             <Text style={[styles.heading, { color: colors.text }]}>Explore prayers</Text>
             <Text style={[styles.description, { color: colors.muted }]}>
-              Daily devotion and prayers from Christian traditions.
+              Daily devotions, traditional prayers, and original reflections.
             </Text>
             <View style={[styles.search, { backgroundColor: colors.card, borderColor: colors.border }]}>
               <Ionicons name="search-outline" size={20} color={colors.muted} />
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   description: { fontSize: 14, lineHeight: 21, marginTop: 6, marginBottom: 20 },
   search: { height: 54, borderRadius: 16, borderWidth: 1, flexDirection: "row", alignItems: "center", paddingHorizontal: 15, gap: 10 },
   searchInput: { flex: 1, fontSize: 15 },
-  filters: { flexDirection: "row", gap: 9, marginTop: 15, marginBottom: 28 },
+  filters: { flexDirection: "row", flexWrap: "wrap", gap: 9, marginTop: 15, marginBottom: 28 },
   chip: { paddingVertical: 10, paddingHorizontal: 18, borderRadius: 24, borderWidth: 1 },
   listHeading: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 15 },
   listTitle: { fontSize: 20, fontWeight: "700" },

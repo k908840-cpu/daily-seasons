@@ -24,7 +24,7 @@ No account required. No advertisements or analytics. Designed for quiet, intenti
 ## Required before submission
 
 - [x] Add developer support contact: k908840@gmail.com (confirm inbox access before submission).
-- [ ] Publish PRIVACY_POLICY.md at a stable public HTTPS URL and link it in Play Console and the app.
+- [ ] Enable GitHub Pages (Settings → Pages → Deploy from a branch → main → /docs) and verify https://k908840-cpu.github.io/daily-seasons/ loads. The app link is committed, but publication is not verified.
 - [ ] Confirm final packaged WEB edition, public-domain status, prayer wording and attribution.
 - [ ] Test offline reading, journal, reminders, backups, and accessibility on real Android devices.
 - [ ] Implement Play Billing with purchase acknowledgement, pending transaction handling, refunds, restore, and internal-test verification **or** remove the paid gate and paid marketing for a free launch.

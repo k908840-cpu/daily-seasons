@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { Screen } from "@/components/Screen";
 import { useApp } from "@/context/AppContext";
 import type { TextSize } from "@/lib/storage";
+import { BILLING_AVAILABLE } from "@/lib/purchases";
 
 export default function SettingsScreen() {
   const { settings, updateSettings, colors, premium, restore } = useApp();
@@ -91,9 +92,9 @@ export default function SettingsScreen() {
           <Text style={[styles.rowText, { color: colors.text }]}>{premium ? "Lifetime access unlocked" : "Explore lifetime access"}</Text>
           <Ionicons name="chevron-forward" size={18} color={colors.muted} />
         </Pressable>
-        <Pressable onPress={() => void restore()} style={[styles.row, { borderTopWidth: 1, borderTopColor: colors.border }]}>
+        <Pressable onPress={() => void restore()} disabled={!BILLING_AVAILABLE} accessibilityState={{ disabled: !BILLING_AVAILABLE }} style={[styles.row, { borderTopWidth: 1, borderTopColor: colors.border, opacity: BILLING_AVAILABLE ? 1 : 0.45 }]}>
           <Ionicons name="refresh-outline" size={21} color={colors.accent} />
-          <Text style={[styles.rowText, { color: colors.text }]}>Restore purchase</Text>
+          <Text style={[styles.rowText, { color: colors.text }]}>{BILLING_AVAILABLE ? "Restore purchase" : "Restore purchase (coming soon)"}</Text>
           <Ionicons name="chevron-forward" size={18} color={colors.muted} />
         </Pressable>
         <Pressable onPress={() => router.push("/backup")} style={[styles.row, { borderTopWidth: 1, borderTopColor: colors.border }]}>

@@ -107,7 +107,7 @@ export default function HomeScreen() {
     <Screen scroll style={styles.container}>
       <View style={styles.header}>
         <Text style={[styles.eyebrow, { color: colors.accent }]}>
-          DAILY SEASONS
+          DAILY SEASONS · ONE FAITH, MANY TRADITIONS
         </Text>
 
         <Text style={[styles.date, { color: colors.muted }]}>
@@ -169,6 +169,16 @@ export default function HomeScreen() {
         <Text style={{ color: "#fff", fontSize: 21, fontWeight: "600", marginTop: 8 }}>{recommendation.title} →</Text>
         <Text style={{ color: "#F2F0F7", marginTop: 5 }}>{recommendation.subtitle}</Text>
       </Pressable>
+      <View style={{ flexDirection: "row", gap: 11, marginBottom: 12 }}>
+        <Pressable accessibilityRole="button" onPress={() => router.push("/(tabs)/prayers")} style={{ flex: 1, backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1, borderRadius: 16, padding: 16 }}>
+          <Text style={{ color: colors.text, fontSize: 16, fontWeight: "600" }}>Your prayer library →</Text>
+          <Text style={{ color: colors.muted, fontSize: 12, marginTop: 7 }}>Save favorites for quiet moments</Text>
+        </Pressable>
+        <Pressable accessibilityRole="button" onPress={() => router.push("/night-prayer")} style={{ flex: 1, backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1, borderRadius: 16, padding: 16 }}>
+          <Text style={{ color: colors.text, fontSize: 16, fontWeight: "600" }}>Night prayer →</Text>
+          <Text style={{ color: colors.muted, fontSize: 12, marginTop: 7 }}>Listen and release the day</Text>
+        </Pressable>
+      </View>
       <View style={{ flexDirection: "row", gap: 11, marginBottom: 27 }}>
         <Pressable onPress={() => router.push("/calendar")} style={{ flex: 1, backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1, borderRadius: 16, padding: 16 }}>
           <Text style={{ color: colors.text, fontSize: 16, fontWeight: "600" }}>Christian calendar →</Text>

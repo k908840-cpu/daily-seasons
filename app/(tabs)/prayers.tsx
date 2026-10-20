@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback } from "react";
-import { loadBookmarks, toggleBookmark } from "@/lib/storage";
+import { loadBookmarks, toggleBookmark, loadPrayerCollections, savePrayerCollections, type PrayerCollection } from "@/lib/storage";
 import { useApp } from "@/context/AppContext";
 import { DAILY_PRAYERS, LIBRARY_PRAYERS } from "@/data/prayers";
 
@@ -15,7 +15,14 @@ export default function PrayersScreen() {
   const { colors } = useApp();
   const [query, setQuery] = useState("");
   const [favorites, setFavorites] = useState<string[]>([]);
-  useFocusEffect(useCallback(() => { let active = true; void loadBookmarks().then(items => { if (active) setFavorites(items.filter(b => b.kind === "prayer").map(b => b.ref)); }); return () => { active = false; }; }, []));
+  const [collections, setCollections] = useState<PrayerCollection[]>([]);
+  const [newCollection, setNewCollection] = useState("");
+  const [activeCollection, setActiveCollection] = useState<string | null>(null);
+  const [showCollections, setShowCollections] = useState(false);
+  useFocusEffect(useCallback(() => { let active = true; void Promise.all([loadBookmarks(), loadPrayerCollections()]).then(([items, saved]) => { if (active) { setFavorites(items.filter(b => b.kind === "prayer").map(b => b.ref)); setCollections(saved); } }); return () => { active = false; }; }, []));
+  const updateCollections = async (items: PrayerCollection[]) => { await savePrayerCollections(items); setCollections(items); };
+  const addCollection = async () => { const name = newCollection.trim(); if (!name) return; const id = `collection-${Date.now()}`; await updateCollections([...collections, { id, name, prayerIds: [] }]); setActiveCollection(id); setNewCollection(""); };
+  const toggleInCollection = async (id: string) => { if (!activeCollection) return; await updateCollections(collections.map(col => col.id !== activeCollection ? col : { ...col, prayerIds: col.prayerIds.includes(id) ? col.prayerIds.filter(p => p !== id) : [...col.prayerIds, id] })); };
   const toggleFavorite = async (id: string, title: string) => {
     const items = await toggleBookmark({ id: `prayer-${id}`, kind: "prayer", ref: id, title, createdAt: new Date().toISOString() });
     setFavorites(items.filter(b => b.kind === "prayer").map(b => b.ref));
@@ -28,10 +35,11 @@ export default function PrayersScreen() {
       ...LIBRARY_PRAYERS.map((prayer) => ({ ...prayer, group: "Library" as const })),
     ];
     return items.filter((prayer) =>
+
       (category === "All" || (category === "Favorites" ? favorites.includes(prayer.id) : category === "Traditional" ? prayer.sourceId !== "daily-seasons-original" : prayer.group === category)) &&
       prayer.title.toLowerCase().includes(query.trim().toLowerCase())
     );
-  }, [query, category, favorites]);
+  }, [query, category, favorites, activeCollection, collections]);
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
@@ -91,6 +99,13 @@ export default function PrayersScreen() {
                 </Pressable>
               ))}
             </View>
+            <Pressable accessibilityRole="button" onPress={() => setShowCollections(!showCollections)} style={{ paddingVertical: 12 }}><Text style={{ color: colors.accent, fontWeight: "700", fontSize: 16 }}>My prayer collections {showCollections ? "⌃" : "⌄"}</Text></Pressable>
+            {showCollections && <View style={{ marginBottom: 20, gap: 10 }}>
+              <View style={{ flexDirection: "row", gap: 8 }}><TextInput accessibilityLabel="New collection name" placeholder="e.g. Morning prayers" placeholderTextColor={colors.muted} value={newCollection} onChangeText={setNewCollection} style={{ flex: 1, color: colors.text, borderColor: colors.border, borderWidth: 1, borderRadius: 12, padding: 12 }} /><Pressable accessibilityRole="button" onPress={() => void addCollection()} style={{ backgroundColor: colors.accent, borderRadius: 12, padding: 13, justifyContent: "center" }}><Text style={{ color: "#fff" }}>Create</Text></Pressable></View>
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}><Pressable onPress={() => setActiveCollection(null)} style={{ padding: 10, backgroundColor: !activeCollection ? colors.accent : colors.card, borderRadius: 12 }}><Text style={{ color: !activeCollection ? "#fff" : colors.text }}>All collections</Text></Pressable>{collections.map(col => <Pressable key={col.id} onPress={() => setActiveCollection(col.id)} style={{ padding: 10, backgroundColor: activeCollection === col.id ? colors.accent : colors.card, borderRadius: 12 }}><Text style={{ color: activeCollection === col.id ? "#fff" : colors.text }}>{col.name} ({col.prayerIds.length})</Text></Pressable>)}</View>
+              {activeCollection && <Pressable onPress={() => { void updateCollections(collections.filter(col => col.id !== activeCollection)); setActiveCollection(null); }}><Text style={{ color: colors.muted, textDecorationLine: "underline" }}>Delete selected collection</Text></Pressable>}
+              {activeCollection && <Text style={{ color: colors.muted, fontSize: 12 }}>Use the + buttons below to add or remove prayers.</Text>}
+            </View>}
             <View style={styles.listHeading}>
               <Text style={[styles.listTitle, { color: colors.text }]}>Prayer collection</Text>
               <Text style={[styles.count, { color: colors.muted }]}>{entries.length} entries</Text>
@@ -120,6 +135,7 @@ export default function PrayersScreen() {
                   {historical ? "Traditional prayer" : item.group}{pending ? " · Text pending verification" : ""}
                 </Text>
               </View>
+              {activeCollection && <Pressable accessibilityRole="button" accessibilityLabel={`Toggle ${item.title} in collection`} onPress={() => void toggleInCollection(item.id)} style={{ padding: 8 }}><Ionicons name={collections.find(col => col.id === activeCollection)?.prayerIds.includes(item.id) ? "remove-circle" : "add-circle-outline"} size={22} color={colors.accent} /></Pressable>}
               <Pressable accessibilityRole="button" accessibilityLabel={favorites.includes(item.id) ? `Remove ${item.title} from favorites` : `Add ${item.title} to favorites`} onPress={() => void toggleFavorite(item.id, item.title)} hitSlop={12} style={{ padding: 10 }}>
                 <Ionicons name={favorites.includes(item.id) ? "heart" : "heart-outline"} size={23} color={favorites.includes(item.id) ? colors.accent : colors.muted} />
               </Pressable>

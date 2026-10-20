@@ -1,14 +1,14 @@
-# Daily Seasons — Google Play release preparation
+# One Faith — Google Play release preparation
 
 ## Store listing draft
 
-**App name:** Daily Seasons
+**App name:** One Faith: Prayer & Bible
 
-**Short description (under 80 characters):** Gentle Christian prayer, Scripture, and daily reflection.
+**Short description (under 80 characters):** Christian prayer and Bible devotion across traditions, every day.
 
 **Full description:**
 
-Make space for prayer throughout the Christian year with Daily Seasons, a calm companion for Scripture, reflection, and traditional Christian devotion.
+One faith, many traditions. Make space for prayer throughout the Christian year with One Faith, a calm companion for Scripture, reflection, and traditional Christian devotion.
 
 - Read the World English Bible offline, search passages, and save notes and bookmarks.
 - Explore original prayers and selected historic Christian prayers with source information.

@@ -23,7 +23,7 @@ No account required. No advertisements or analytics. Designed for quiet, intenti
 
 ## Required before submission
 
-- [ ] Replace the contact placeholder in PRIVACY_POLICY.md with an active support email.
+- [x] Add developer support contact: k908840@gmail.com (confirm inbox access before submission).
 - [ ] Publish PRIVACY_POLICY.md at a stable public HTTPS URL and link it in Play Console and the app.
 - [ ] Confirm final packaged WEB edition, public-domain status, prayer wording and attribution.
 - [ ] Test offline reading, journal, reminders, backups, and accessibility on real Android devices.

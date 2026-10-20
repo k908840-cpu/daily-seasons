@@ -32,7 +32,12 @@ export async function ensureNotificationPermission(): Promise<boolean> {
 export async function scheduleDailyReminder(settings: UserSettings): Promise<void> {
   if (inExpoGo) return;
   const Notifications = notifications();
-  await Notifications.cancelAllScheduledNotificationsAsync();
+  const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+  for (const item of scheduled) {
+    if (item.content.data?.dailySeasonsReminder === true) {
+      await Notifications.cancelScheduledNotificationAsync(item.identifier);
+    }
+  }
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("daily-reminder", {
       name: "Daily reminder",
@@ -43,6 +48,7 @@ export async function scheduleDailyReminder(settings: UserSettings): Promise<voi
   await Notifications.scheduleNotificationAsync({
     content: {
       title: "Daily Seasons",
+      data: { dailySeasonsReminder: true },
       body: "A quiet moment for today's reading and prayer.",
     },
     trigger: {

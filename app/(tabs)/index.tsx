@@ -1,12 +1,15 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  Animated,
+  AccessibilityInfo,
   Pressable,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { Screen } from "@/components/Screen";
 import { AdventWreath } from "@/components/AdventWreath";
 import { useApp } from "@/context/AppContext";
@@ -37,6 +40,18 @@ export default function HomeScreen() {
     : null;
 
   const [readDays, setReadDays] = useState<number[]>([]);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const reveal = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    let mounted = true;
+    void AccessibilityInfo.isReduceMotionEnabled().then(value => { if (mounted) setReducedMotion(value); });
+    const sub = AccessibilityInfo.addEventListener("reduceMotionChanged", setReducedMotion);
+    return () => { mounted = false; sub.remove(); };
+  }, []);
+  useEffect(() => {
+    if (reducedMotion) { reveal.setValue(1); return; }
+    Animated.timing(reveal, { toValue: 1, duration: 550, useNativeDriver: true }).start();
+  }, [reducedMotion, reveal]);
 
   useEffect(() => {
     let active = true;
@@ -69,6 +84,16 @@ export default function HomeScreen() {
   };
 
   const recommendation = recommendPrayer(settings, today.getHours());
+  const hour = today.getHours();
+  const greeting = hour < 11 ? "A gentle morning." : hour < 17 ? "A moment to pause." : "Rest in this moment.";
+  const personalContext = settings.spiritualGoal === "Find a moment of peace" ? "A little room to breathe and pray."
+    : settings.spiritualGoal === "Explore Scripture" ? "A moment to listen through Scripture."
+    : settings.spiritualGoal === "Build a prayer habit" ? "Small, faithful steps each day."
+    : settings.spiritualGoal === "Grow closer to God" ? "A daily invitation to draw near."
+    : "Your companion through the Christian year.";
+  const tradition = settings.denomination && settings.denomination !== "Exploring / not sure" ? settings.denomination : "Your own path";
+  const duration = settings.preferredDuration ?? 5;
+  const quickPrayerId = hour < 12 ? "morning" : hour < 19 ? "lib-peace" : "evening";
   const countdown = daysUntilChristmas(today);
   const seasonName = season?.label ?? "Ordinary Time";
 
@@ -90,11 +115,11 @@ export default function HomeScreen() {
         </Text>
 
         <Text style={[styles.title, { color: colors.text }]}>
-          A moment of peace.
+          {greeting}
         </Text>
 
         <Text style={[styles.subtitle, { color: colors.muted }]}>
-          Your companion through the Christian year.
+          {personalContext}
         </Text>
       </View>
 
@@ -313,6 +338,21 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  personalCard: { borderWidth: 1, borderRadius: 24, padding: 19, marginBottom: 22 },
+  personalHeading: { flexDirection: "row", alignItems: "center", gap: 12 },
+  personalSymbol: { width: 48, height: 48, borderRadius: 16, alignItems: "center", justifyContent: "center" },
+  personalEyebrow: { fontSize: 10, fontWeight: "800", letterSpacing: 1.5 },
+  personalTitle: { fontSize: 19, fontWeight: "700", marginTop: 4 },
+  personalDetail: { fontSize: 13, marginTop: 14 },
+  personalActions: { flexDirection: "row", gap: 10, marginTop: 16 },
+  personalAction: { flex: 1, borderRadius: 14, minHeight: 49, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 9 },
+  personalActionText: { color: "#fff", fontSize: 14, fontWeight: "700" },
+  personalEdit: { borderWidth: 1, borderRadius: 14, width: 50, alignItems: "center", justifyContent: "center" },
+  quickHeading: { fontSize: 20, fontWeight: "700", marginBottom: 12 },
+  quickRow: { flexDirection: "row", gap: 11, marginBottom: 23 },
+  quickTile: { flex: 1, borderWidth: 1, borderRadius: 19, padding: 16, gap: 8 },
+  quickTitle: { fontSize: 15, fontWeight: "700" },
+  quickCaption: { fontSize: 12 },
   container: {
     paddingHorizontal: 20,
     paddingTop: 14,

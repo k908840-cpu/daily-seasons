@@ -107,7 +107,7 @@ export default function HomeScreen() {
     <Screen scroll style={styles.container}>
       <View style={styles.header}>
         <Text style={[styles.eyebrow, { color: colors.accent }]}>
-          DAILY SEASONS · ONE FAITH, MANY TRADITIONS
+          ONE FAITH · MANY TRADITIONS
         </Text>
 
         <Text style={[styles.date, { color: colors.muted }]}>

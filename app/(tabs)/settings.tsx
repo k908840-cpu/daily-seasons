@@ -14,6 +14,21 @@ export default function SettingsScreen() {
       <Text style={[styles.eyebrow, { color: colors.accent }]}>MAKE IT YOURS</Text>
       <Text style={[styles.title, { color: colors.text }]}>Settings</Text>
       <Text style={[styles.subtitle, { color: colors.muted }]}>A quieter experience, your way.</Text>
+      <Text style={[styles.heading, { color: colors.text }]}>Your Christian tradition</Text>
+      <Text style={[styles.detail, { color: colors.muted }]}>Used for suggestions, never to hide prayers or Scripture.</Text>
+      <View style={[styles.panel, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        {(["Catholic", "Orthodox", "Anglican", "Protestant", "Other Christian", "Exploring / not sure"] as const).map((tradition, i) => (
+          <Pressable key={tradition} accessibilityRole="radio" accessibilityState={{ checked: settings.denomination === tradition }} onPress={() => void updateSettings({ denomination: tradition })} style={[styles.row, i > 0 && { borderTopWidth: 1, borderTopColor: colors.border }]}>
+            <Text style={[styles.rowText, { color: colors.text }]}>{tradition}</Text>
+            {settings.denomination === tradition && <Ionicons name="checkmark-circle" size={22} color={colors.accent} />}
+          </Pressable>
+        ))}
+      </View>
+      <Pressable accessibilityRole="button" onPress={() => router.push("/onboarding")} style={[styles.row, { backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1, borderRadius: 16, marginTop: 14 }]}>
+        <Ionicons name="refresh-outline" size={21} color={colors.accent} />
+        <Text style={[styles.rowText, { color: colors.text }]}>Replay personalized introduction</Text>
+        <Ionicons name="chevron-forward" size={18} color={colors.muted} />
+      </Pressable>
       <Text style={[styles.heading, { color: colors.text }]}>Appearance</Text>
       <View style={[styles.panel, { backgroundColor: colors.card, borderColor: colors.border }]}>
         {(["system", "light", "dark"] as const).map((mode, i) => (

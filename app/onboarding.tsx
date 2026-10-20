@@ -6,6 +6,7 @@ import { Screen } from "@/components/Screen";
 import { useApp } from "@/context/AppContext";
 
 const steps = [
+  { kicker: "YOUR TRADITION", title: "Which Christian tradition feels like home?", subtitle: "This helps us suggest relevant prayers. Every tradition remains open to explore.", options: ["Catholic", "Orthodox", "Anglican", "Protestant", "Other Christian", "Exploring / not sure"] },
   {
     kicker: "YOUR JOURNEY",
     title: "What brings you here?",
@@ -42,6 +43,8 @@ export default function OnboardingScreen() {
   }, [step, entrance]);
   const response = step === 0 ? "A meaningful place to begin." : step === 1 ? "We'll make room for your rhythm." : "Your path can change whenever you like.";
   const iconFor = (option: string): React.ComponentProps<typeof Ionicons>["name"] => {
+    if (/Catholic|Orthodox|Anglican|Protestant/i.test(option)) return "home-outline";
+    if (/minute/i.test(option)) return "time-outline";
     if (/peace|evening|night/i.test(option)) return "moon-outline";
     if (/Scripture|reflections|closer/i.test(option)) return "book-outline";
     if (/morning|Christmas|Advent/i.test(option)) return "sunny-outline";
@@ -54,7 +57,7 @@ export default function OnboardingScreen() {
     setBusy(true);
     try {
       // Store only the choices needed for future local personalization.
-      await updateSettings({ onboardingComplete: true, spiritualGoal: answers[0], preferredPrayerTime: answers[1], preferredInterest: answers[2] });
+      await updateSettings({ onboardingComplete: true, denomination: answers[0] as "Catholic" | "Orthodox" | "Anglican" | "Protestant" | "Other Christian" | "Exploring / not sure", spiritualGoal: answers[1], preferredPrayerTime: answers[2], preferredDuration: Number.parseInt(answers[3], 10) || 5, preferredInterest: answers[4] });
       router.replace("/(tabs)");
     } finally {
       setBusy(false);

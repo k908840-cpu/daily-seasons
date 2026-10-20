@@ -8,7 +8,7 @@ import type { TextSize } from "@/lib/storage";
 import { BILLING_AVAILABLE } from "@/lib/purchases";
 
 export default function SettingsScreen() {
-  const { settings, updateSettings, colors, premium, restore } = useApp();
+  const { settings, updateSettings, colors, premium, restore, musicEnabled, musicVolume, setMusicEnabled, setMusicVolume } = useApp();
   const router = useRouter();
   return (
     <Screen scroll style={styles.page}>
@@ -49,6 +49,16 @@ export default function SettingsScreen() {
             {settings.textSize === size && <Ionicons name="checkmark-circle" size={22} color={colors.accent} />}
           </Pressable>
         ))}
+      </View>
+      <Text style={[styles.heading, { color: colors.text }]}>Background music</Text>
+      <Text style={[styles.detail, { color: colors.muted }]}>Piano Dreamcloud Meditation · NaturesEye. Optional instrumental ambience. Music is off by default and loops when enabled.</Text>
+      <View style={[styles.panel, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <Pressable accessibilityRole="switch" accessibilityState={{ checked: musicEnabled }} onPress={() => void setMusicEnabled(!musicEnabled)} style={styles.row}>
+          <Ionicons name={musicEnabled ? "volume-high-outline" : "volume-mute-outline"} size={23} color={colors.accent} />
+          <Text style={[styles.rowText, { color: colors.text }]}>{musicEnabled ? "Mute background music" : "Play background music"}</Text>
+          <Ionicons name={musicEnabled ? "toggle" : "toggle-outline"} size={27} color={colors.accent} />
+        </Pressable>
+        <View style={{ paddingHorizontal: 17, paddingBottom: 16 }}><Text style={{ color: colors.muted, marginBottom: 10 }}>Music volume · {Math.round(musicVolume * 100)}%</Text><View style={{ flexDirection: "row", gap: 8 }}>{[0.08, 0.15, 0.25, 0.4].map(v => <Pressable key={v} accessibilityRole="button" accessibilityLabel={`Set music volume to ${Math.round(v * 100)} percent`} onPress={() => void setMusicVolume(v)} style={{ flex: 1, paddingVertical: 12, borderRadius: 10, backgroundColor: Math.abs(musicVolume - v) < 0.001 ? colors.accent : colors.background }}><Text style={{ color: Math.abs(musicVolume - v) < 0.001 ? "#fff" : colors.text, textAlign: "center" }}>{Math.round(v * 100)}%</Text></Pressable>)}</View></View>
       </View>
       <Text style={[styles.heading, { color: colors.text }]}>Narration voice</Text>
       <Text style={[styles.detail, { color: colors.muted }]}>Choose the English accent used for spoken prayers. Available voices depend on your phone's speech engine.</Text>
@@ -113,7 +123,7 @@ export default function SettingsScreen() {
           <Ionicons name="chevron-forward" size={18} color={colors.muted} />
         </Pressable>
       </View>
-      <Text style={[styles.footer, { color: colors.muted }]}>Daily Seasons · A gentle companion through the Christian year.</Text>
+      <Text style={[styles.footer, { color: colors.muted }]}>One Faith · A gentle companion through the Christian year.</Text>
     </Screen>
   );
 }

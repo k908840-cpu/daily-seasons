@@ -90,7 +90,8 @@ export default function PrayersScreen() {
           </>
         }
         renderItem={({ item }) => {
-          const pending = item.sourceId === "placeholder";\n          const historical = item.sourceId !== "daily-seasons-original" && !pending;
+          const pending = item.sourceId === "placeholder";
+          const historical = item.sourceId !== "daily-seasons-original" && !pending;
           return (
             <Pressable
               accessibilityRole="button"

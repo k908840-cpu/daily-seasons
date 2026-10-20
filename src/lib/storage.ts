@@ -33,6 +33,8 @@ export interface UserSettings {
   preferredInterest?: string;
   preferredDuration?: number;
   speechRate?: number;
+  musicEnabled?: boolean;
+  musicVolume?: number;
   speechLocale?: "en-US" | "en-GB" | "device";
 }
 
@@ -70,6 +72,8 @@ const defaultSettings: UserSettings = {
   darkMode: "system",
   preferredDuration: 5,
   speechRate: 0.9,
+  musicEnabled: false,
+  musicVolume: 0.15,
   speechLocale: "en-US",
 };
 

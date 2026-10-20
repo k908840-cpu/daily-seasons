@@ -34,6 +34,6 @@ Daily Seasons is not designed to collect children's personal information. The ap
 
 ## Updates and contact
 
-We may update this notice when app features change. **Before public release, add a working developer contact email and host this policy at a public, accessible URL.**
+We may update this notice when app features change. The privacy policy will be hosted at a public, accessible URL before release. Contact us using the email below for privacy questions.
 
-Developer contact: **[ADD SUPPORT EMAIL BEFORE PUBLICATION]**
+Developer contact: k908840@gmail.com

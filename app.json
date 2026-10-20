@@ -32,7 +32,6 @@
           "color": "#c9a227"
         }
       ],
-      "react-native-iap",
       "expo-asset",
       "expo-font"
     ],

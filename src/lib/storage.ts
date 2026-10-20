@@ -13,6 +13,8 @@ const KEYS = {
   rosarySession: "@daily_seasons/rosary_session",
   dailyPath: "@daily_seasons/daily_path",
   novenaProgress: "@daily_seasons/novena_progress",
+  prayerCollections: "@daily_seasons/prayer_collections",
+  listeningPosition: "@daily_seasons/listening_position",
 } as const;
 
 export type TextSize = "normal" | "large";
@@ -204,4 +206,22 @@ export async function loadNovenaProgress(): Promise<Record<string, number[]>> {
 }
 export async function saveNovenaProgress(progress: Record<string, number[]>): Promise<void> {
   await AsyncStorage.setItem(KEYS.novenaProgress, JSON.stringify(progress));
+}
+
+/** User-curated prayer collections remain private and offline. */
+export interface PrayerCollection { id: string; name: string; prayerIds: string[] }
+export async function loadPrayerCollections(): Promise<PrayerCollection[]> {
+  const raw = await AsyncStorage.getItem(KEYS.prayerCollections);
+  return raw ? JSON.parse(raw) as PrayerCollection[] : [];
+}
+export async function savePrayerCollections(collections: PrayerCollection[]): Promise<void> {
+  await AsyncStorage.setItem(KEYS.prayerCollections, JSON.stringify(collections));
+}
+export async function loadListeningPosition(): Promise<number> {
+  const raw = await AsyncStorage.getItem(KEYS.listeningPosition);
+  const index = Number(raw ?? 0);
+  return Number.isInteger(index) && index >= 0 && index < 3 ? index : 0;
+}
+export async function saveListeningPosition(index: number): Promise<void> {
+  await AsyncStorage.setItem(KEYS.listeningPosition, String(index));
 }

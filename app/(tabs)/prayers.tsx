@@ -90,7 +90,7 @@ export default function PrayersScreen() {
           </>
         }
         renderItem={({ item }) => {
-          const pending = item.sourceId === "placeholder";
+          const pending = item.sourceId === "placeholder";\n          const historical = item.sourceId !== "daily-seasons-original" && !pending;
           return (
             <Pressable
               accessibilityRole="button"
@@ -108,7 +108,7 @@ export default function PrayersScreen() {
               <View style={styles.cardBody}>
                 <Text style={[styles.cardTitle, { color: colors.text }]}>{item.title}</Text>
                 <Text style={[styles.cardCaption, { color: colors.muted }]}>
-                  {item.group}{pending ? " · Text pending verification" : ""}
+                  {historical ? "Traditional prayer" : item.group}{pending ? " · Text pending verification" : ""}
                 </Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color={colors.muted} />
@@ -120,7 +120,7 @@ export default function PrayersScreen() {
         }
         ListFooterComponent={
           <Text style={[styles.footer, { color: colors.muted }]}>
-            Original prayers are available now. Historical texts will be added after source and translation verification.
+            Original reflections and selected short traditional prayers. More historical texts are being reviewed.
           </Text>
         }
       />

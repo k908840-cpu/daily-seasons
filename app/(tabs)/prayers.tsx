@@ -1,17 +1,25 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback } from "react";
+import { loadBookmarks, toggleBookmark } from "@/lib/storage";
 import { useApp } from "@/context/AppContext";
 import { DAILY_PRAYERS, LIBRARY_PRAYERS } from "@/data/prayers";
 
-type Category = "All" | "Daily" | "Library" | "Traditional";
-const categories: Category[] = ["All", "Daily", "Library", "Traditional"];
+type Category = "All" | "Favorites" | "Daily" | "Library" | "Traditional";
+const categories: Category[] = ["All", "Favorites", "Daily", "Library", "Traditional"];
 
 export default function PrayersScreen() {
   const router = useRouter();
   const { colors } = useApp();
   const [query, setQuery] = useState("");
+  const [favorites, setFavorites] = useState<string[]>([]);
+  useFocusEffect(useCallback(() => { let active = true; void loadBookmarks().then(items => { if (active) setFavorites(items.filter(b => b.kind === "prayer").map(b => b.ref)); }); return () => { active = false; }; }, []));
+  const toggleFavorite = async (id: string, title: string) => {
+    const items = await toggleBookmark({ id: `prayer-${id}`, kind: "prayer", ref: id, title, createdAt: new Date().toISOString() });
+    setFavorites(items.filter(b => b.kind === "prayer").map(b => b.ref));
+  };
   const [category, setCategory] = useState<Category>("All");
 
   const entries = useMemo(() => {
@@ -20,10 +28,10 @@ export default function PrayersScreen() {
       ...LIBRARY_PRAYERS.map((prayer) => ({ ...prayer, group: "Library" as const })),
     ];
     return items.filter((prayer) =>
-      (category === "All" || (category === "Traditional" ? prayer.sourceId !== "daily-seasons-original" : prayer.group === category)) &&
+      (category === "All" || (category === "Favorites" ? favorites.includes(prayer.id) : category === "Traditional" ? prayer.sourceId !== "daily-seasons-original" : prayer.group === category)) &&
       prayer.title.toLowerCase().includes(query.trim().toLowerCase())
     );
-  }, [query, category]);
+  }, [query, category, favorites]);
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
@@ -112,12 +120,14 @@ export default function PrayersScreen() {
                   {historical ? "Traditional prayer" : item.group}{pending ? " · Text pending verification" : ""}
                 </Text>
               </View>
-              <Ionicons name="chevron-forward" size={18} color={colors.muted} />
+              <Pressable accessibilityRole="button" accessibilityLabel={favorites.includes(item.id) ? `Remove ${item.title} from favorites` : `Add ${item.title} to favorites`} onPress={() => void toggleFavorite(item.id, item.title)} hitSlop={12} style={{ padding: 10 }}>
+                <Ionicons name={favorites.includes(item.id) ? "heart" : "heart-outline"} size={23} color={favorites.includes(item.id) ? colors.accent : colors.muted} />
+              </Pressable>
             </Pressable>
           );
         }}
         ListEmptyComponent={
-          <Text style={[styles.empty, { color: colors.muted }]}>No matching prayers. Try another search.</Text>
+          <Text style={[styles.empty, { color: colors.muted }]}>No matching prayers. Save a prayer with the heart icon or try another search.</Text>
         }
         ListFooterComponent={
           <Text style={[styles.footer, { color: colors.muted }]}>

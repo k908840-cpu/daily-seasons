@@ -1,31 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Easing, Pressable, StyleSheet, Text, View } from "react-native";
+import { AccessibilityInfo, Animated, Easing, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { Screen } from "@/components/Screen";
 import { useApp } from "@/context/AppContext";
 
 const steps = [
-  { kicker: "YOUR TRADITION", title: "Which Christian tradition feels like home?", subtitle: "This helps us suggest relevant prayers. Every tradition remains open to explore.", options: ["Catholic", "Orthodox", "Anglican", "Protestant", "Other Christian", "Exploring / not sure"] },
-  {
-    kicker: "YOUR JOURNEY",
-    title: "What brings you here?",
-    subtitle: "Choose what matters most right now.",
-    options: ["Find a moment of peace", "Grow closer to God", "Build a prayer habit", "Explore Scripture", "Follow the Christian seasons"],
-  },
-  {
-    kicker: "YOUR RHYTHM",
-    title: "When do you find time to pause?",
-    subtitle: "There is no perfect time to pray.",
-    options: ["Early morning", "During the day", "In the evening", "Whenever I need it"],
-  },
-  {
-    kicker: "YOUR INTERESTS",
-    title: "What would you like to explore?",
-    subtitle: "Choose a starting point. You can explore everything later.",
-    options: ["Daily reflections", "Traditional prayers", "The Rosary", "Advent and Christmas", "Lent and Easter"],
-  },
+  { kicker: "YOUR ROOTS", title: "Every journey begins somewhere.", subtitle: "Which Christian tradition feels like home to you?", options: ["Catholic", "Orthodox", "Anglican", "Protestant", "Other Christian", "Exploring / not sure"], icons: ["heart-outline", "sparkles-outline", "leaf-outline", "book-outline", "earth-outline", "compass-outline"] },
+  { kicker: "YOUR HEART", title: "What is your heart looking for?", subtitle: "There is no wrong reason to begin.", options: ["Find a moment of peace", "Grow closer to God", "Build a prayer habit", "Explore Scripture", "Follow the Christian seasons"], icons: ["moon-outline", "heart-outline", "flame-outline", "book-outline", "sunny-outline"] },
+  { kicker: "YOUR RHYTHM", title: "Find a moment that's yours.", subtitle: "We'll shape your daily experience around your rhythm.", options: ["Early morning", "During the day", "In the evening", "Whenever I need it"], icons: ["sunny-outline", "partly-sunny-outline", "moon-outline", "infinite-outline"] },
+  { kicker: "YOUR MOMENT", title: "Even a little time matters.", subtitle: "How long would you like your daily pause to be?", options: ["2 minutes", "5 minutes", "10 minutes", "15 minutes"], icons: ["flash-outline", "time-outline", "hourglass-outline", "leaf-outline"] },
+  { kicker: "YOUR PATH", title: "What would you love to explore?", subtitle: "We'll begin here. Everything else stays open to you.", options: ["Daily reflections", "Traditional prayers", "The Rosary", "Advent and Christmas", "Lent and Easter"], icons: ["sunny-outline", "book-outline", "ellipse-outline", "star-outline", "flower-outline"] },
 ] as const;
+
+const STEP_COUNT = steps.length;
+const iconName = (value: string): React.ComponentProps<typeof Ionicons>["name"] => value as React.ComponentProps<typeof Ionicons>["name"];
 
 export default function OnboardingScreen() {
   const router = useRouter();
@@ -34,141 +22,193 @@ export default function OnboardingScreen() {
   const [answers, setAnswers] = useState<string[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const motion = useRef(new Animated.Value(1)).current;
+  const progress = useRef(new Animated.Value(0)).current;
+  const selectionPulse = useRef(new Animated.Value(1)).current;
+  const scroll = useRef<ScrollView>(null);
 
-  const current = steps[step];
-  const entrance = useRef(new Animated.Value(0)).current;
   useEffect(() => {
-    entrance.setValue(0);
-    Animated.timing(entrance, { toValue: 1, duration: 380, easing: Easing.out(Easing.cubic), useNativeDriver: true }).start();
-  }, [step, entrance]);
-  const response = step === 0 ? "A meaningful place to begin." : step === 1 ? "We'll make room for your rhythm." : "Your path can change whenever you like.";
-  const iconFor = (option: string): React.ComponentProps<typeof Ionicons>["name"] => {
-    if (/Catholic|Orthodox|Anglican|Protestant/i.test(option)) return "home-outline";
-    if (/minute/i.test(option)) return "time-outline";
-    if (/peace|evening|night/i.test(option)) return "moon-outline";
-    if (/Scripture|reflections|closer/i.test(option)) return "book-outline";
-    if (/morning|Christmas|Advent/i.test(option)) return "sunny-outline";
-    if (/Rosary|prayer|habit/i.test(option)) return "heart-outline";
-    if (/seasons|Lent|Easter/i.test(option)) return "leaf-outline";
-    return "sparkles-outline";
+    let active = true;
+    void AccessibilityInfo.isReduceMotionEnabled().then(value => { if (active) setReduceMotion(value); });
+    const sub = AccessibilityInfo.addEventListener("reduceMotionChanged", setReduceMotion);
+    return () => { active = false; sub.remove(); };
+  }, []);
+
+  useEffect(() => {
+    motion.stopAnimation();
+    progress.stopAnimation();
+    if (reduceMotion) {
+      motion.setValue(1);
+      progress.setValue((step + 1) / (STEP_COUNT + 1));
+    } else {
+      motion.setValue(0);
+      Animated.parallel([
+        Animated.spring(motion, { toValue: 1, friction: 9, tension: 70, useNativeDriver: true }),
+        Animated.timing(progress, { toValue: (step + 1) / (STEP_COUNT + 1), duration: 520, easing: Easing.out(Easing.cubic), useNativeDriver: false }),
+      ]).start();
+    }
+    scroll.current?.scrollTo({ y: 0, animated: !reduceMotion });
+  }, [step, reduceMotion, motion, progress]);
+
+  const choose = (value: string) => {
+    setSelected(value);
+    if (reduceMotion) return;
+    selectionPulse.setValue(0.97);
+    Animated.spring(selectionPulse, { toValue: 1, friction: 5, tension: 180, useNativeDriver: true }).start();
   };
+
+  const next = () => {
+    if (!selected) return;
+    setAnswers(prev => [...prev.slice(0, step), selected]);
+    setStep(prev => prev + 1);
+    setSelected(answers[step + 1] ?? null);
+  };
+
+  const back = () => {
+    if (step === 0) return;
+    const previous = step - 1;
+    setStep(previous);
+    setSelected(answers[previous] ?? null);
+  };
+
   const finish = async () => {
     if (busy) return;
     setBusy(true);
     try {
-      // Store only the choices needed for future local personalization.
-      await updateSettings({ onboardingComplete: true, denomination: answers[0] as "Catholic" | "Orthodox" | "Anglican" | "Protestant" | "Other Christian" | "Exploring / not sure", spiritualGoal: answers[1], preferredPrayerTime: answers[2], preferredDuration: Number.parseInt(answers[3], 10) || 5, preferredInterest: answers[4] });
+      await updateSettings({
+        onboardingComplete: true,
+        denomination: answers[0] as "Catholic" | "Orthodox" | "Anglican" | "Protestant" | "Other Christian" | "Exploring / not sure",
+        spiritualGoal: answers[1],
+        preferredPrayerTime: answers[2],
+        preferredDuration: Number.parseInt(answers[3] ?? "5", 10) || 5,
+        preferredInterest: answers[4],
+      });
       router.replace("/(tabs)");
     } finally {
       setBusy(false);
     }
   };
 
-  const next = () => {
-    if (!selected) return;
-    setAnswers((prev) => [...prev.slice(0, step), selected]);
-    if (step === steps.length - 1) {
-      setStep(steps.length);
-    } else {
-      setStep((prev) => prev + 1);
-      setSelected(answers[step + 1] ?? null);
-    }
-  };
+  const current = steps[step];
+  const isReady = step >= STEP_COUNT;
+  const progressWidth = progress.interpolate({ inputRange: [0, 1], outputRange: ["0%", "100%"] });
+  const arrival = { opacity: motion, transform: [{ translateY: motion.interpolate({ inputRange: [0, 1], outputRange: [reduceMotion ? 0 : 34, 0] }) }, { scale: motion.interpolate({ inputRange: [0, 1], outputRange: [reduceMotion ? 1 : 0.97, 1] }) }] };
+  const tradition = answers[0] === "Exploring / not sure" ? "your own path" : answers[0] ?? "your own path";
+  const goal = answers[1] ?? "a moment of peace";
+  const interest = answers[4] ?? "daily reflection";
 
   return (
-    <Screen scroll style={styles.page}>
-      <View style={styles.topRow}>
-        <Text style={[styles.brand, { color: colors.accent }]}>DAILY SEASONS</Text>
-        <Text style={[styles.progress, { color: colors.muted }]}>
-          {step < steps.length ? `${step + 1} OF ${steps.length}` : "READY"}
-        </Text>
-      </View>
-      <View style={[styles.track, { backgroundColor: colors.border }]}>
-        <View style={[styles.fill, { backgroundColor: colors.accent, width: `${((step + 1) / (steps.length + 1)) * 100}%` }]} />
-      </View>
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
+      <ScrollView ref={scroll} showsVerticalScrollIndicator={false} contentContainerStyle={styles.page}>
+        <View style={styles.top}>
+          <View style={[styles.brandIcon, { backgroundColor: colors.accent }]}>
+            <Ionicons name="sparkles" size={17} color="#fff" />
+          </View>
+          <Text style={[styles.brand, { color: colors.text }]}>DAILY SEASONS</Text>
+          <Text style={[styles.counter, { color: colors.muted }]}>{isReady ? "YOUR BEGINNING" : String(step + 1).padStart(2, "0") + " / " + String(STEP_COUNT).padStart(2, "0")}</Text>
+        </View>
+        <View style={[styles.track, { backgroundColor: colors.border }]}>
+          <Animated.View style={[styles.trackFill, { width: progressWidth, backgroundColor: colors.accent }]} />
+        </View>
 
-      {current ? (
-        <>
-          <Text style={[styles.kicker, { color: colors.accent }]}>{current.kicker}</Text>
-          <Text style={[styles.title, { color: colors.text }]}>{current.title}</Text>
-          <Text style={[styles.subtitle, { color: colors.muted }]}>{current.subtitle}</Text>
-          <View style={styles.options}>
-            {current.options.map((option) => {
-              const active = selected === option;
-              return (
-                <Pressable
-                  key={option}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: active }}
-                  onPress={() => setSelected(option)}
-                  style={[styles.option, { backgroundColor: colors.card, borderColor: active ? colors.accent : colors.border }]}
-                >
-                  <Ionicons name={iconFor(option)} size={23} color={active ? colors.accent : colors.muted} />
-                  <Text style={[styles.optionText, { color: colors.text }]}>{option}</Text>
-                  <Ionicons name={active ? "checkmark-circle" : "ellipse-outline"} size={23} color={active ? colors.accent : colors.muted} />
-                </Pressable>
-              );
-            })}
+        <Animated.View style={arrival}>
+          <View style={[styles.art, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={[styles.haloOuter, { borderColor: colors.border }]}>
+              <View style={[styles.haloMiddle, { backgroundColor: colors.background }]}>
+                <Ionicons name={isReady ? "heart" : iconName(current.icons[Math.min(step, current.icons.length - 1)])} size={54} color={colors.accent} />
+              </View>
+            </View>
+            <View style={[styles.orbitOne, { backgroundColor: colors.accent }]} />
+            <View style={[styles.orbitTwo, { borderColor: colors.accent }]} />
+            <Text style={[styles.artCaption, { color: colors.muted }]}>{isReady ? "MADE FOR YOUR JOURNEY" : "A MOMENT JUST FOR YOU"}</Text>
           </View>
-          <Pressable
-            disabled={!selected}
-            onPress={next}
-            style={[styles.button, { backgroundColor: colors.accent, opacity: selected ? 1 : 0.45 }]}
-          >
-            <Text style={styles.buttonText}>Continue</Text>
-            <Ionicons name="arrow-forward" size={20} color="#FFFFFF" />
-          </Pressable>
-        </>
-      ) : (
-        <>
-          <View style={[styles.symbol, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Ionicons name="sparkles-outline" size={38} color={colors.accent} />
-          </View>
-          <Text style={[styles.kicker, { color: colors.accent }]}>A NEW BEGINNING</Text>
-          <Text style={[styles.title, { color: colors.text }]}>A little space for what matters.</Text>
-          <Text style={[styles.subtitle, { color: colors.muted }]}>
-            Your Daily Seasons journey is ready. Explore daily reflections, prayer, and the Christian year at your own pace.
-          </Text>
-          <View style={[styles.note, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Ionicons name="heart-outline" size={22} color={colors.accent} />
-            <Text style={[styles.noteText, { color: colors.text }]}>
-              Begin with free content. Optional lifetime access is available inside the app — no subscription or payment is required to start.
-            </Text>
-          </View>
-          <Pressable onPress={() => void finish()} disabled={busy} style={[styles.button, { backgroundColor: colors.accent }]}>
-            <Text style={styles.buttonText}>{busy ? "Opening..." : "Begin my journey"}</Text>
-            <Ionicons name="arrow-forward" size={20} color="#FFFFFF" />
-          </Pressable>
-        </>
-      )}
-      {step > 0 && step < steps.length && (
-        <Pressable onPress={() => { setStep(step - 1); setSelected(answers[step - 1] ?? null); }} style={styles.back}>
-          <Text style={[styles.backText, { color: colors.muted }]}>Back</Text>
-        </Pressable>
-      )}
-    </Screen>
+
+          {isReady ? (
+            <>
+              <Text style={[styles.kicker, { color: colors.accent }]}>WELCOME HOME</Text>
+              <Text style={[styles.title, { color: colors.text }]}>A quieter journey, made yours.</Text>
+              <Text style={[styles.subtitle, { color: colors.muted }]}>You've chosen a starting point. Your path can grow and change with you.</Text>
+              <View style={[styles.summary, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                <Text style={[styles.summaryEyebrow, { color: colors.accent }]}>YOUR DAILY SEASONS</Text>
+                <Text style={[styles.summaryTitle, { color: colors.text }]}>A space for {goal.toLowerCase()}.</Text>
+                <Text style={[styles.summaryLine, { color: colors.muted }]}>Rooted in {tradition} · {answers[3] ?? "5 minutes"} a day</Text>
+                <Text style={[styles.summaryLine, { color: colors.muted }]}>Begin with {interest.toLowerCase()}</Text>
+              </View>
+              <Text style={[styles.footnote, { color: colors.muted }]}>Start for free. Your choices stay on your device and can be changed anytime.</Text>
+              <Pressable disabled={busy} accessibilityRole="button" onPress={() => void finish()} style={[styles.primary, { backgroundColor: colors.accent }]}>
+                <Text style={styles.primaryText}>{busy ? "Opening your space..." : "Begin my journey"}</Text>
+                <Ionicons name="arrow-forward" size={21} color="#fff" />
+              </Pressable>
+            </>
+          ) : (
+            <>
+              <Text style={[styles.kicker, { color: colors.accent }]}>{current.kicker}</Text>
+              <Text style={[styles.title, { color: colors.text }]}>{current.title}</Text>
+              <Text style={[styles.subtitle, { color: colors.muted }]}>{current.subtitle}</Text>
+              <View style={styles.options}>
+                {current.options.map((option, i) => {
+                  const active = selected === option;
+                  return (
+                    <Animated.View key={option} style={active ? { transform: [{ scale: selectionPulse }] } : undefined}>
+                      <Pressable
+                        accessibilityRole="radio"
+                        accessibilityState={{ checked: active }}
+                        onPress={() => choose(option)}
+                        style={[styles.option, { backgroundColor: active ? colors.accent : colors.card, borderColor: active ? colors.accent : colors.border }]}
+                      >
+                        <View style={[styles.optionIcon, { backgroundColor: active ? "rgba(255,255,255,0.16)" : colors.background }]}>
+                          <Ionicons name={iconName(current.icons[i])} size={23} color={active ? "#fff" : colors.accent} />
+                        </View>
+                        <Text style={[styles.optionText, { color: active ? "#fff" : colors.text }]}>{option}</Text>
+                        <Ionicons name={active ? "checkmark-circle" : "arrow-forward-circle-outline"} size={23} color={active ? "#fff" : colors.muted} />
+                      </Pressable>
+                    </Animated.View>
+                  );
+                })}
+              </View>
+              <Pressable accessibilityRole="button" disabled={!selected} onPress={next} style={[styles.primary, { backgroundColor: colors.accent, opacity: selected ? 1 : 0.45 }]}>
+                <Text style={styles.primaryText}>Continue</Text>
+                <Ionicons name="arrow-forward" size={21} color="#fff" />
+              </Pressable>
+              <Text style={[styles.footnote, { color: colors.muted }]}>There are no wrong answers. Change your preferences anytime.</Text>
+            </>
+          )}
+        </Animated.View>
+        {step > 0 && <Pressable accessibilityRole="button" onPress={back} style={styles.back}><Ionicons name="arrow-back" size={18} color={colors.muted} /><Text style={{ color: colors.muted, fontSize: 14 }}>Go back</Text></Pressable>}
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  page: { paddingHorizontal: 24, paddingTop: 26, paddingBottom: 60 },
-  topRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  brand: { fontSize: 12, letterSpacing: 2.2, fontWeight: "800" },
-  progress: { fontSize: 11, fontWeight: "700", letterSpacing: 1.3 },
-  track: { height: 4, borderRadius: 4, overflow: "hidden", marginTop: 20, marginBottom: 52 },
-  fill: { height: 4, borderRadius: 4 },
-  kicker: { fontSize: 11, fontWeight: "800", letterSpacing: 2, marginBottom: 13 },
-  title: { fontSize: 34, fontWeight: "600", letterSpacing: -0.8, lineHeight: 41, marginBottom: 13 },
-  subtitle: { fontSize: 16, lineHeight: 25, marginBottom: 30 },
-  options: { gap: 12 },
-  option: { minHeight: 68, borderWidth: 1.5, borderRadius: 18, paddingHorizontal: 19, paddingVertical: 14, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12 },
-  optionText: { flex: 1, fontSize: 16, fontWeight: "500", lineHeight: 23 },
-  button: { marginTop: 32, borderRadius: 18, minHeight: 60, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 12 },
-  buttonText: { color: "#FFFFFF", fontSize: 16, fontWeight: "700" },
-  selectionFeedback: { fontSize: 14, fontWeight: "600", marginTop: 18 },
-  back: { alignSelf: "center", padding: 16, marginTop: 6 },
-  backText: { fontSize: 14 },
-  symbol: { width: 84, height: 84, borderRadius: 26, borderWidth: 1, alignItems: "center", justifyContent: "center", marginBottom: 32 },
-  note: { flexDirection: "row", gap: 13, padding: 18, borderRadius: 18, borderWidth: 1, alignItems: "flex-start" },
-  noteText: { flex: 1, fontSize: 14, lineHeight: 22 },
+  root: { flex: 1 },
+  page: { paddingHorizontal: 24, paddingTop: 28, paddingBottom: 70 },
+  top: { flexDirection: "row", alignItems: "center", gap: 9 },
+  brandIcon: { width: 31, height: 31, borderRadius: 11, justifyContent: "center", alignItems: "center" },
+  brand: { fontSize: 12, fontWeight: "800", letterSpacing: 1.7, flex: 1 },
+  counter: { fontSize: 10, fontWeight: "800", letterSpacing: 1.2 },
+  track: { height: 5, borderRadius: 5, overflow: "hidden", marginTop: 23, marginBottom: 23 },
+  trackFill: { height: 5, borderRadius: 5 },
+  art: { height: 194, borderWidth: 1, borderRadius: 30, justifyContent: "center", alignItems: "center", marginBottom: 30, overflow: "hidden" },
+  haloOuter: { width: 148, height: 148, borderWidth: 1, borderRadius: 74, justifyContent: "center", alignItems: "center" },
+  haloMiddle: { width: 116, height: 116, borderRadius: 58, justifyContent: "center", alignItems: "center" },
+  orbitOne: { position: "absolute", width: 13, height: 13, borderRadius: 7, top: 32, right: 65, opacity: 0.55 },
+  orbitTwo: { position: "absolute", width: 21, height: 21, borderRadius: 11, borderWidth: 2, bottom: 37, left: 52, opacity: 0.5 },
+  artCaption: { position: "absolute", bottom: 12, fontSize: 9, fontWeight: "700", letterSpacing: 2 },
+  kicker: { fontSize: 11, fontWeight: "800", letterSpacing: 2.3, marginBottom: 11 },
+  title: { fontSize: 32, lineHeight: 39, letterSpacing: -0.8, fontWeight: "700", marginBottom: 11 },
+  subtitle: { fontSize: 15, lineHeight: 23, marginBottom: 23 },
+  options: { gap: 10 },
+  option: { flexDirection: "row", alignItems: "center", minHeight: 68, padding: 12, borderWidth: 1.5, borderRadius: 20, gap: 13 },
+  optionIcon: { width: 44, height: 44, borderRadius: 15, alignItems: "center", justifyContent: "center" },
+  optionText: { flex: 1, fontSize: 15, lineHeight: 21, fontWeight: "600" },
+  primary: { marginTop: 23, minHeight: 60, borderRadius: 19, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 13 },
+  primaryText: { color: "#fff", fontSize: 16, fontWeight: "700" },
+  footnote: { fontSize: 12, lineHeight: 19, textAlign: "center", marginTop: 15 },
+  back: { alignSelf: "center", flexDirection: "row", alignItems: "center", gap: 8, padding: 16, marginTop: 10 },
+  summary: { borderWidth: 1, borderRadius: 22, padding: 20, gap: 10 },
+  summaryEyebrow: { fontSize: 11, fontWeight: "800", letterSpacing: 1.8 },
+  summaryTitle: { fontSize: 21, lineHeight: 29, fontWeight: "700" },
+  summaryLine: { fontSize: 14, lineHeight: 22 },
 });

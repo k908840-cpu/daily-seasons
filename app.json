@@ -33,13 +33,17 @@
         }
       ],
       "expo-asset",
-      "expo-font"
+      "expo-font",
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true
     },
     "extra": {
-      "eas": {}
+      "eas": {
+        "projectId": "305a8974-3efa-4c69-8b63-c5f2d29b6aaf"
+      },
+      "router": {}
     }
   }
 }

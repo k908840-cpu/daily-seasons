@@ -25,6 +25,7 @@ export interface UserSettings {
   reminderMinute: number;
   mode: AppMode;
   darkMode: "system" | "light" | "dark";
+  denomination?: "Catholic" | "Orthodox" | "Anglican" | "Protestant" | "Other Christian" | "Exploring / not sure";
   spiritualGoal?: string;
   preferredPrayerTime?: string;
   preferredInterest?: string;

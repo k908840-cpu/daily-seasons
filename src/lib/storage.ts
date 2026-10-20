@@ -72,7 +72,7 @@ const defaultSettings: UserSettings = {
   darkMode: "system",
   preferredDuration: 5,
   speechRate: 0.9,
-  musicEnabled: false,
+  musicEnabled: true,
   musicVolume: 0.15,
   speechLocale: "en-US",
 };

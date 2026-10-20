@@ -7,6 +7,7 @@ import React, {
   useState,
 } from "react";
 import { useColorScheme } from "react-native";
+import { useAudioPlayer, setAudioModeAsync } from "expo-audio";
 import {
   loadSettings,
   saveSettings,
@@ -25,6 +26,10 @@ interface AppContextValue {
   restore: () => Promise<boolean>;
   colors: ThemeColors;
   isDark: boolean;
+  musicEnabled: boolean;
+  musicVolume: number;
+  setMusicEnabled: (enabled: boolean) => Promise<void>;
+  setMusicVolume: (volume: number) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -33,6 +38,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const scheme = useColorScheme();
   const [settings, setSettings] = useState<UserSettings | null>(null);
   const [premium, setPremium] = useState(false);
+  const player = useAudioPlayer(require("../../assets/audio/piano-dreamcloud-meditation.mp3"));
+  const musicEnabled = settings?.musicEnabled ?? false;
+  const musicVolume = settings?.musicVolume ?? 0.15;
+  useEffect(() => { void setAudioModeAsync({ playsInSilentMode: true, shouldPlayInBackground: false }); }, []);
+  useEffect(() => { player.loop = true; player.volume = Math.max(0, Math.min(1, musicVolume)); if (musicEnabled) player.play(); else player.pause(); }, [player, musicEnabled, musicVolume]);
 
   useEffect(() => {
     void (async () => {
@@ -61,6 +71,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const setMusicEnabled = useCallback(async (enabled: boolean) => { await updateSettings({ musicEnabled: enabled }); }, [updateSettings]);
+  const setMusicVolume = useCallback(async (volume: number) => { await updateSettings({ musicVolume: Math.max(0, Math.min(1, volume)) }); }, [updateSettings]);
+
   const refreshPremium = useCallback(async () => {
     setPremium(await isPremiumUnlocked());
   }, []);
@@ -88,9 +101,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             restore,
             colors,
             isDark,
+            musicEnabled,
+            musicVolume,
+            setMusicEnabled,
+            setMusicVolume,
           }
         : null,
-    [settings, updateSettings, premium, refreshPremium, restore, colors, isDark]
+    [settings, updateSettings, premium, refreshPremium, restore, colors, isDark, musicEnabled, musicVolume, setMusicEnabled, setMusicVolume]
   );
 
   if (!value) return null;

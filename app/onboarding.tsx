@@ -100,7 +100,8 @@ export default function OnboardingScreen() {
                   onPress={() => setSelected(option)}
                   style={[styles.option, { backgroundColor: colors.card, borderColor: active ? colors.accent : colors.border }]}
                 >
-                  <Ionicons name={iconFor(option)} size={23} color={active ? colors.accent : colors.muted} />\n                  <Text style={[styles.optionText, { color: colors.text }]}>{option}</Text>
+                  <Ionicons name={iconFor(option)} size={23} color={active ? colors.accent : colors.muted} />
+                  <Text style={[styles.optionText, { color: colors.text }]}>{option}</Text>
                   <Ionicons name={active ? "checkmark-circle" : "ellipse-outline"} size={23} color={active ? colors.accent : colors.muted} />
                 </Pressable>
               );
@@ -161,7 +162,8 @@ const styles = StyleSheet.create({
   optionText: { flex: 1, fontSize: 16, fontWeight: "500", lineHeight: 23 },
   button: { marginTop: 32, borderRadius: 18, minHeight: 60, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 12 },
   buttonText: { color: "#FFFFFF", fontSize: 16, fontWeight: "700" },
-  selectionFeedback: { fontSize: 14, fontWeight: "600", marginTop: 18 },\n  back: { alignSelf: "center", padding: 16, marginTop: 6 },
+  selectionFeedback: { fontSize: 14, fontWeight: "600", marginTop: 18 },
+  back: { alignSelf: "center", padding: 16, marginTop: 6 },
   backText: { fontSize: 14 },
   symbol: { width: 84, height: 84, borderRadius: 26, borderWidth: 1, alignItems: "center", justifyContent: "center", marginBottom: 32 },
   note: { flexDirection: "row", gap: 13, padding: 18, borderRadius: 18, borderWidth: 1, alignItems: "flex-start" },

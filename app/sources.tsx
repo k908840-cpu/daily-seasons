@@ -1,7 +1,7 @@
 import { Screen } from "@/components/Screen";
 import { Body, Muted, Title } from "@/components/Typography";
 import { SOURCES } from "@/data/sources";
-import { StyleSheet, View } from "react-native";
+import { Linking, Pressable, StyleSheet, View } from "react-native";
 import { useApp } from "@/context/AppContext";
 
 
@@ -28,8 +28,11 @@ export default function SourcesScreen() {
       <View style={[styles.block, { borderColor: colors.border }]}>
         <Body style={styles.label}>Privacy</Body>
         <Muted>
-          No accounts, advertising, analytics, or automatic cloud sync are built into Daily Seasons. Your journal, bookmarks, and settings are stored locally. Optional backup sharing uses your phone’s share sheet and may send data to the service you select. Reminders use local notification permissions. The full privacy notice is included in the project and must be published at a public URL before Play Store submission.
+          No accounts, advertising, analytics, or automatic cloud sync are built into Daily Seasons. Your journal, bookmarks, and settings are stored locally. Optional backup sharing uses your phone’s share sheet and may send data to the service you select. Reminders use local notification permissions.
         </Muted>
+        <Pressable accessibilityRole="link" onPress={() => void Linking.openURL("https://k908840-cpu.github.io/daily-seasons/")} style={{ marginTop: 12, paddingVertical: 8 }}>
+          <Body style={{ color: colors.accent }}>Read the privacy policy ↗</Body>
+        </Pressable>
       </View>
     </Screen>
   );

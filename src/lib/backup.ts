@@ -44,7 +44,7 @@ export function parseBackup(text: string): BackupData {
   if (text.length > MAX_BYTES) throw new Error("Backup is too large (maximum 1 MB).");
   let parsed: unknown;
   try { parsed = JSON.parse(text); } catch { throw new Error("Backup is not valid JSON."); }
-  if (!plainObject(parsed) || parsed.app !== "daily-seasons" || parsed.version !== 1 || !plainObject(parsed.data)) throw new Error("Not a supported Daily Seasons backup.");
+  if (!plainObject(parsed) || parsed.app !== "daily-seasons" || parsed.version !== 1 || !plainObject(parsed.data)) throw new Error("Not a supported One Faith backup.");
   const data = parsed.data;
   if (Object.keys(data).some(k => !FIELDS.includes(k as Field))) throw new Error("Backup contains unknown fields.");
   if (!Object.keys(data).length) throw new Error("Backup contains no app data.");

@@ -47,7 +47,7 @@ export async function scheduleDailyReminder(settings: UserSettings): Promise<voi
   if (!(await ensureNotificationPermission())) return;
   await Notifications.scheduleNotificationAsync({
     content: {
-      title: "Daily Seasons",
+      title: "One Faith",
       data: { dailySeasonsReminder: true },
       body: "A quiet moment for today's reading and prayer.",
     },

@@ -105,7 +105,7 @@ export default function OnboardingScreen() {
           <View style={[styles.brandIcon, { backgroundColor: colors.accent }]}>
             <Ionicons name="sparkles" size={17} color="#fff" />
           </View>
-          <Text style={[styles.brand, { color: colors.text }]}>DAILY SEASONS</Text>
+          <Text style={[styles.brand, { color: colors.text }]}>ONE FAITH</Text>
           <Text style={[styles.counter, { color: colors.muted }]}>{isReady ? "YOUR BEGINNING" : String(step + 1).padStart(2, "0") + " / " + String(STEP_COUNT).padStart(2, "0")}</Text>
         </View>
         <View style={[styles.track, { backgroundColor: colors.border }]}>
@@ -130,9 +130,9 @@ export default function OnboardingScreen() {
               <Text style={[styles.title, { color: colors.text }]}>A quieter journey, made yours.</Text>
               <Text style={[styles.subtitle, { color: colors.muted }]}>You've chosen a starting point. Your path can grow and change with you.</Text>
               <View style={[styles.summary, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                <Text style={[styles.summaryEyebrow, { color: colors.accent }]}>YOUR DAILY SEASONS</Text>
+                <Text style={[styles.summaryEyebrow, { color: colors.accent }]}>YOUR ONE FAITH</Text>
                 <Text style={[styles.summaryTitle, { color: colors.text }]}>A space for {goal.toLowerCase()}.</Text>
-                <Text style={[styles.summaryLine, { color: colors.muted }]}>Rooted in {tradition} · {answers[3] ?? "5 minutes"} a day</Text>
+                <Text style={[styles.summaryLine, { color: colors.muted }]}>Rooted in {tradition} Â· {answers[3] ?? "5 minutes"} a day</Text>
                 <Text style={[styles.summaryLine, { color: colors.muted }]}>Begin with {interest.toLowerCase()}</Text>
               </View>
               <Text style={[styles.footnote, { color: colors.muted }]}>Start for free. Your choices stay on your device and can be changed anytime.</Text>

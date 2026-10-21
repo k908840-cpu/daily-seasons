@@ -10,8 +10,8 @@ export const SOURCES: SourceAttribution[] = [
   },
   {
     id: "daily-seasons-original",
-    label: "Daily Seasons original prayers",
-    detail: "Original reflections and prayers written for Daily Seasons; not official liturgical texts.",
+    label: "One Faith original prayers",
+    detail: "Original reflections and prayers written for One Faith; not official liturgical texts.",
   },
   {
     id: "bcp-1662-kyrie",

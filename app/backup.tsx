@@ -15,7 +15,7 @@ export default function BackupScreen() {
     try {
       setBusy(true);
       const data = await exportBackup();
-      await Share.share({ title: "Daily Seasons private backup", message: data });
+      await Share.share({ title: "One Faith private backup", message: data });
       setMessage("The system share sheet was opened. Save the backup text in a private, secure location.");
     } catch (error) { setMessage(error instanceof Error ? error.message : "Unable to share backup."); }
     finally { setBusy(false); }
@@ -40,7 +40,7 @@ export default function BackupScreen() {
       <Text style={{ color: "#fff", fontWeight: "700", textAlign: "center" }}>Share private backup text</Text>
     </Pressable>
     <Text style={{ color: colors.text, fontSize: 20, fontWeight: "600", marginTop: 30 }}>Restore a backup</Text>
-    <Text style={{ color: colors.muted, lineHeight: 21, marginTop: 8 }}>Paste the entire Daily Seasons backup JSON below. Review it before restoring.</Text>
+    <Text style={{ color: colors.muted, lineHeight: 21, marginTop: 8 }}>Paste the entire One Faith backup JSON below. Review it before restoring.</Text>
     <TextInput multiline value={input} onChangeText={setInput} placeholder="Paste backup JSON" placeholderTextColor={colors.muted} textAlignVertical="top" autoCapitalize="none" style={{ minHeight: 155, borderWidth: 1, borderColor: colors.border, borderRadius: 15, padding: 14, backgroundColor: colors.card, color: colors.text, marginTop: 14 }} />
     <Pressable disabled={busy || !input.trim()} onPress={restore} style={{ borderWidth: 1, borderColor: colors.accent, borderRadius: 15, padding: 16, marginTop: 13, opacity: busy || !input.trim() ? 0.5 : 1 }}>
       <Text style={{ color: colors.accent, textAlign: "center", fontWeight: "700" }}>Validate & restore</Text>

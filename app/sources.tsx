@@ -28,10 +28,10 @@ export default function SourcesScreen() {
       <View style={[styles.block, { borderColor: colors.border }]}>
         <Body style={styles.label}>Privacy</Body>
         <Muted>
-          No accounts, advertising, analytics, or automatic cloud sync are built into Daily Seasons. Your journal, bookmarks, and settings are stored locally. Optional backup sharing uses your phone’s share sheet and may send data to the service you select. Reminders use local notification permissions.
+          No accounts, advertising, analytics, or automatic cloud sync are built into One Faith. Your journal, bookmarks, and settings are stored locally. Optional backup sharing uses your phoneâ€™s share sheet and may send data to the service you select. Reminders use local notification permissions.
         </Muted>
         <Pressable accessibilityRole="link" onPress={() => void Linking.openURL("https://k908840-cpu.github.io/daily-seasons/")} style={{ marginTop: 12, paddingVertical: 8 }}>
-          <Body style={{ color: colors.accent }}>Read the privacy policy ↗</Body>
+          <Body style={{ color: colors.accent }}>Read the privacy policy â†—</Body>
         </Pressable>
       </View>
     </Screen>
